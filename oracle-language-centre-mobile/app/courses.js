@@ -2,6 +2,7 @@ import { View, Text, FlatList, TouchableOpacity, StyleSheet, Alert } from "react
 import { useEffect, useState } from "react";
 import { useRouter } from "expo-router";
 import axios from "axios";
+import api from "./api";
 
 export default function Courses() {
   const router = useRouter();
@@ -11,7 +12,7 @@ export default function Courses() {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const response = await axios.get("http://192.168.100.25:5000/courses"); // ✅ Fetch Courses
+        const response = await api.get("/courses"); // ✅ Fetch Courses
         if (response.data.length === 0) {
           setCourses([]);
         } else {

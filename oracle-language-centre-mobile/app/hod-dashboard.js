@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
+import api from "./api";
 
 export default function HODDashboard() {
   const router = useRouter();
@@ -20,7 +21,7 @@ export default function HODDashboard() {
       }
 
       const tokenData = JSON.parse(hodToken);
-      const response = await axios.get("http://192.168.100.25:5000/hod/approved-students", {
+      const response = await api.get("/hod/approved-students", {
         headers: { Authorization: `Bearer ${tokenData.token}` },
       });
 

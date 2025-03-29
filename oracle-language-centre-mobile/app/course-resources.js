@@ -6,6 +6,7 @@ import {
 import { useLocalSearchParams, useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import api from "./api";
 
 const CourseResourcesScreen = () => {
   const [resources, setResources] = useState([]);
@@ -33,7 +34,7 @@ const CourseResourcesScreen = () => {
   const fetchResources = () => {
     if (!studentId || !courseId) return;
     setLoading(true);
-    axios.get(`http://192.168.100.25:5000/students/course-resources/${studentId}/${courseId}`)
+    api.get(`/students/course-resources/${studentId}/${courseId}`)
       .then(response => {
         setResources(response.data.map(resource => ({
           ...resource,
@@ -49,7 +50,7 @@ const CourseResourcesScreen = () => {
   useEffect(() => { fetchResources(); }, [studentId, courseId]);
 
   const handleRequestResource = (resourceId) => {
-    axios.post(`http://192.168.100.25:5000/students/resource-request/${studentId}/${courseId}/${resourceId}`)
+    api.post(`/students/resource-request/${studentId}/${courseId}/${resourceId}`)
       .then(() => {
         Alert.alert("Request Sent", "Your request has been submitted successfully.");
         fetchResources();

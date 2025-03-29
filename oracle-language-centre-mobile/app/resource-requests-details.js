@@ -6,6 +6,7 @@ import {
 import { useLocalSearchParams, useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import api from "./api";
 
 const ResourceRequestDetails = () => {
   const [resource, setResource] = useState(null);
@@ -35,8 +36,8 @@ const ResourceRequestDetails = () => {
     if (!studentId || !resourceId) return;
     
     try {
-      const response = await axios.get(
-        `http://192.168.100.25:5000/students/resource-details/${studentId}/${resourceId}`
+      const response = await api.get(
+        `/students/resource-details/${studentId}/${resourceId}`
       );
       
       if (response.data.success) {
@@ -62,8 +63,8 @@ const ResourceRequestDetails = () => {
     
     setIsConfirming(true);
     try {
-      const response = await axios.post(
-        `http://192.168.100.25:5000/students/confirm-receipt/${studentId}/${resource.course_id}/${resource.resource_id}`
+      const response = await api.post(
+        `/students/confirm-receipt/${studentId}/${resource.course_id}/${resource.resource_id}`
       );
       
       if (response.data.success) {

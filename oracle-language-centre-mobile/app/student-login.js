@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from "reac
 import axios from "axios";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import api from "./api";
 
 export default function StudentLogin() {
   const [username, setUsername] = useState("");
@@ -12,7 +13,7 @@ export default function StudentLogin() {
   const handleLogin = async () => {
     try {
       // Send login request to the server
-      const response = await axios.post("http://192.168.100.25:5000/auth/student/login", {
+      const response = await api.post("/auth/student/login", {
         username,
         password,
       });

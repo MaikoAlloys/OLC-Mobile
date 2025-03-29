@@ -2,6 +2,7 @@ import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import api from "./api";
 
 export default function LibrarianProfile() {
   const [librarian, setLibrarian] = useState(null);
@@ -19,7 +20,7 @@ export default function LibrarianProfile() {
       }
 
       const tokenData = JSON.parse(librarianToken);
-      const response = await axios.get("http://192.168.100.25:5000/librarian/profile", {
+      const response = await api.get("/librarian/profile", {
         headers: { Authorization: `Bearer ${tokenData.token}` },
       });
 

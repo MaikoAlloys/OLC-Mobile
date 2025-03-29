@@ -2,7 +2,10 @@ const express = require("express");
 const router = express.Router();
 const db = require("../db");
 const jwt = require("jsonwebtoken");
+const fs = require('fs');
 const path = require("path");
+const PDFDocument = require('pdfkit');
+
 
 // ✅ Middleware to authenticate user
 const authenticateUser = (req, res, next) => {
@@ -317,6 +320,78 @@ router.get("/download-certificate/:studentId/:courseId", authenticateUser, (req,
             res.status(404).json({ message: "Certificate not found" });
         }
     });
+});
+
+// Endpoint for generating and downloading certificate
+router.get("/generate-certificate/:studentId/:courseId", authenticateUser, async (req, res) => {
+    const { studentId, courseId } = req.params;
+
+    try {
+        // Fetch student details
+        const [user] = await db.promise().query("SELECT first_name, last_name FROM users WHERE id = ?", [studentId]);
+        if (!user || user.length === 0) {
+            return res.status(404).json({ message: "Student not found" });
+        }
+
+        // Fetch course details
+        const [course] = await db.promise().query("SELECT id, name FROM courses WHERE id = ?", [courseId]);
+        if (!course || course.length === 0) {
+            return res.status(404).json({ message: "Course not found" });
+        }
+
+        // Create PDF document
+        const doc = new PDFDocument();
+        const certificatePath = path.join(__dirname, "..", "certificates", `student_${studentId}_course_${courseId}.pdf`);
+
+        // Pipe the output to a file
+        doc.pipe(fs.createWriteStream(certificatePath));
+
+        // Add content to the certificate
+        doc.fontSize(20).text(`Certificate of Completion`, { align: 'center' });
+        doc.fontSize(14).text(`This is to certify that:`, { align: 'center' });
+        doc.fontSize(16).text(`${user[0].first_name} ${user[0].last_name}`, { align: 'center' });
+        doc.fontSize(14).text(`has successfully completed the course:`, { align: 'center' });
+        doc.fontSize(16).text(`${course[0].name}`, { align: 'center' });
+        doc.fontSize(12).text(`Issue Date: ${new Date().toISOString().split("T")[0]}`, { align: 'center' });
+
+        // Finalize the document and save the PDF
+        doc.end();
+
+        // Send a success response
+        res.status(200).json({
+            message: 'Certificate generated successfully',
+            certificatePath: `/certificates/student_${studentId}_course_${courseId}.pdf`
+        });
+
+    } catch (error) {
+        console.error("❌ Error generating certificate:", error.message || error);
+        res.status(500).json({ message: "Error generating certificate", error: error.message || error });
+    }
+});
+
+
+
+// Endpoint to download the generated certificate
+router.get("/download-certificate/:fileName", authenticateUser, async (req, res) => {
+    const { fileName } = req.params;
+    const filePath = path.join(__dirname, "..", "certificates", fileName);
+
+    try {
+        // Check if the file exists
+        if (!fs.existsSync(filePath)) {
+            return res.status(404).json({ message: "Certificate not found" });
+        }
+
+        // Set the correct headers for downloading the file
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', `attachment; filename=${fileName}`);
+
+        // Send the file as a response
+        fs.createReadStream(filePath).pipe(res);
+    } catch (error) {
+        console.error("❌ Error downloading certificate:", error.message || error);
+        res.status(500).json({ message: "Error downloading certificate", error: error.message || error });
+    }
 });
 
 module.exports = router;

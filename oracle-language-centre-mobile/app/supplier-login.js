@@ -2,6 +2,7 @@ import { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from "react-native";
 import axios from "axios";
 import { useRouter } from "expo-router";
+import api from "./api";
 
 export default function SupplierLogin() {
   const [username, setUsername] = useState("");
@@ -10,7 +11,7 @@ export default function SupplierLogin() {
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post("http://192.168.100.25:5000/auth/employee/login", { username, password });
+      const response = await api.post("/auth/employee/login", { username, password });
       Alert.alert("Success", "Login successful!");
       router.push("/dashboard");
     } catch (error) {

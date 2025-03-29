@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Alert, Animated } from "react
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
+import api from "./api";
 
 export default function TutorDashboard() {
   const router = useRouter();
@@ -25,7 +26,7 @@ export default function TutorDashboard() {
       }
 
       const tokenData = JSON.parse(tutorToken);
-      const response = await axios.get("http://192.168.100.25:5000/tutors/assigned-students", {
+      const response = await api.get("/tutors/assigned-students", {
         headers: { Authorization: `Bearer ${tokenData.token}` },
       });
 
@@ -45,8 +46,8 @@ export default function TutorDashboard() {
       const tutorToken = await AsyncStorage.getItem("tutorToken");
       const tokenData = JSON.parse(tutorToken);
 
-      const response = await axios.put(
-        `http://192.168.100.25:5000/tutors/mark-in-progress/${studentId}`,
+      const response = await api.put(
+        `/tutors/mark-in-progress/${studentId}`,
         {},
         { headers: { Authorization: `Bearer ${tokenData.token}` } }
       );

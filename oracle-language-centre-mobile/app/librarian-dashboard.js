@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { View, Text, FlatList, ActivityIndicator, StyleSheet, TouchableOpacity, Animated } from 'react-native';
 import { useRouter } from 'expo-router';
+import api from "./api";
 
 const LearningResourcesScreen = () => {
   const [learningResources, setLearningResources] = useState([]);
@@ -14,7 +15,7 @@ const LearningResourcesScreen = () => {
   useEffect(() => {
     const fetchLearningResources = async () => {
       try {
-        const response = await axios.get('http://192.168.100.25:5000/librarian/learning-resources');
+        const response = await api.get('/librarian/learning-resources');
         setLearningResources(response.data);
       } catch (err) {
         console.error('Error fetching data:', err);

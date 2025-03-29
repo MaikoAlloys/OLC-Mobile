@@ -4,6 +4,7 @@ import { Picker } from "@react-native-picker/picker"; // Updated import
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
+import api from "./api";
 
 export default function AssignTutor() {
   const router = useRouter();
@@ -28,7 +29,7 @@ export default function AssignTutor() {
       }
 
       const tokenData = JSON.parse(hodToken);
-      const response = await axios.get("http://192.168.100.25:5000/hod/approved-students", {
+      const response = await api.get("/hod/approved-students", {
         headers: { Authorization: `Bearer ${tokenData.token}` },
       });
 
@@ -48,7 +49,7 @@ export default function AssignTutor() {
   // ✅ Fetch Tutors (Fixed API URL)
   const fetchTutors = async () => {
     try {
-      const response = await axios.get("http://192.168.100.25:5000/tutors/all");
+      const response = await api.get("/tutors/all");
       console.log("✅ Tutors API Response:", response.data); // Debugging
 
       if (Array.isArray(response.data)) {
@@ -74,8 +75,8 @@ export default function AssignTutor() {
 
       console.log("Sending request with:", { student_id: selectedStudent, tutor_id: selectedTutor }); // Debugging
 
-      const response = await axios.post(
-        "http://192.168.100.25:5000/hod/assign-tutor",
+      const response = await api.post(
+        "/hod/assign-tutor",
         { student_id: selectedStudent, tutor_id: selectedTutor },
         { headers: { Authorization: `Bearer ${tokenData.token}` } }
       );

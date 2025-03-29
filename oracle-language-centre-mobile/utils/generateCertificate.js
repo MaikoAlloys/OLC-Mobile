@@ -1,15 +1,11 @@
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
 import * as FileSystem from 'expo-file-system';
-import axios from 'axios';
-
-const API_BASE_URL = 'http://192.168.100.25:5000';
+import api from "../app/api"; // Use the centralized API instance
 
 async function generateCertificate(studentId, courseId, courseName) {
     try {
         // 1. Get certificate data from backend
-        const response = await axios.get(
-            `${API_BASE_URL}/payments/certificate-details/${studentId}/${courseId}`
-        );
+        const response = await api.get(`/payments/certificate-details/${studentId}/${courseId}`);
 
         const { studentName, issueDate } = response.data;
 

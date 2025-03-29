@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityInd
 import axios from "axios";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import api from "./api";
 
 export default function TutorLogin() {
   const [username, setUsername] = useState("");
@@ -18,7 +19,7 @@ export default function TutorLogin() {
     setLoading(true);
     try {
       // Send login request
-      const response = await axios.post("http://192.168.100.25:5000/auth/tutors/login", { username, password });
+      const response = await api.post("/auth/tutors/login", { username, password });
 
       // Extract tutor data and token from the response
       const tutorData = {

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { useRouter } from "expo-router";
+import api from "./api";
 
 export default function StudentActiveCourse() {
   const [activeCourse, setActiveCourse] = useState(null);
@@ -27,8 +28,8 @@ export default function StudentActiveCourse() {
 
         console.log("Fetching active course for student_id:", studentData.id);
 
-        const response = await axios.get(
-          `http://192.168.100.25:5000/students/active-course/${studentData.id}`
+        const response = await api.get(
+          `/students/active-course/${studentData.id}`
         );
 
         if (response.data) {
@@ -70,8 +71,8 @@ export default function StudentActiveCourse() {
 
       console.log("Sending attendance payload:", payload);
 
-      const response = await axios.post(
-        "http://192.168.100.25:5000/students/mark-attendance", 
+      const response = await api.post(
+        "/students/mark-attendance", 
         payload,
         {
           headers: {

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity, ScrollView, Alert } from "react-native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import api from "./api";
 
 const TutorStudentProgress = () => {
     const [students, setStudents] = useState([]);
@@ -31,8 +32,8 @@ const TutorStudentProgress = () => {
             const tutorData = JSON.parse(tutorToken);
             const tutorId = tutorData.id;
 
-            const response = await axios.get(
-                `http://192.168.100.25:5000/tutors/in-progress-students/${tutorId}`,
+            const response = await api.get(
+                `/tutors/in-progress-students/${tutorId}`,
                 {
                     headers: {
                         Authorization: `Bearer ${tutorData.token}`
@@ -63,8 +64,8 @@ const TutorStudentProgress = () => {
             
             const tutorData = JSON.parse(tutorToken);
 
-            const response = await axios.put(
-                `http://192.168.100.25:5000/tutors/mark-completed/${studentId}`,
+            const response = await api.put(
+                `/tutors/mark-completed/${studentId}`,
                 {},
                 {
                     headers: {

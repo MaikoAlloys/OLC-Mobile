@@ -2,6 +2,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ScrollView,
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import api from "./api";
 
 export default function ApplyCourse() {
   const router = useRouter();
@@ -18,7 +19,7 @@ export default function ApplyCourse() {
   useEffect(() => {
     const fetchCourseDetails = async () => {
       try {
-        const response = await axios.get(`http://192.168.100.25:5000/courses/${id}`);
+        const response = await api.get(`/courses/${id}`);
         setCourseFee(response.data.fee);
       } catch (error) {
         Alert.alert("Error", "Failed to fetch course details");

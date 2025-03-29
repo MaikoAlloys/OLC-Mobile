@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
+import api from "./api";
+
 
 export default function ApprovedStudents() {
   const router = useRouter();
@@ -29,7 +31,7 @@ export default function ApprovedStudents() {
       console.log("✅ Parsed Finance Token:", tokenData.token);
 
       // ✅ Make API request with token
-      const response = await axios.get("http://192.168.100.25:5000/finance/approved-students", {
+      const response = await api.get("/finance/approved-students", {
         headers: { Authorization: `Bearer ${tokenData.token}` },
       });
 

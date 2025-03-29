@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
+import api from "./api";
 
 export default function FinanceDashboard() {
   const router = useRouter();
@@ -21,7 +22,7 @@ export default function FinanceDashboard() {
         }
 
         const tokenData = JSON.parse(financeToken);
-        const response = await axios.get("http://192.168.100.25:5000/finance/new-applicants", {
+        const response = await api.get("/finance/new-applicants", {
           headers: { Authorization: `Bearer ${tokenData.token}` },
         });
 

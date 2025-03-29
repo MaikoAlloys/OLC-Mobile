@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, Modal, StyleSheet, FlatList } from 'react-native';
 import axios from 'axios';
+import api from "./api";
 
 const LibrarianRequests = () => {
   const [requests, setRequests] = useState([]);
@@ -11,7 +12,7 @@ const LibrarianRequests = () => {
   }, []);
 
   const fetchRequests = () => {
-    axios.get('http://192.168.100.25:5000/librarian/requests')
+    api.get('/librarian/requests')
       .then(response => {
         setRequests(response.data);
       })
@@ -21,7 +22,7 @@ const LibrarianRequests = () => {
   };
 
   const submitResource = (requestId) => {
-    axios.put(`http://192.168.100.25:5000/librarian/submit/${requestId}`)
+    api.put(`/librarian/submit/${requestId}`)
       .then(() => {
         fetchRequests();
       })

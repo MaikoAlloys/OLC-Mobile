@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import api from "./api";
 
 export default function FinanceApplicantDetails() {
   const router = useRouter();
@@ -20,7 +21,7 @@ export default function FinanceApplicantDetails() {
         }
 
         const tokenData = JSON.parse(financeToken);
-        const response = await axios.get(`http://192.168.100.25:5000/finance/applicant-details/${id}`, {
+        const response = await api.get(`/finance/applicant-details/${id}`, {
           headers: { Authorization: `Bearer ${tokenData.token}` },
         });
 
@@ -45,7 +46,7 @@ export default function FinanceApplicantDetails() {
       }
 
       const tokenData = JSON.parse(financeToken);
-      await axios.put(`http://192.168.100.25:5000/finance/approve-payment/${id}`, {}, {
+      await api.put(`/finance/approve-payment/${id}`, {}, {
         headers: { Authorization: `Bearer ${tokenData.token}` },
       });
 

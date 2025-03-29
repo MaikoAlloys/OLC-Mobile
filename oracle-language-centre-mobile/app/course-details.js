@@ -2,6 +2,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import api from "./api";
 
 export default function CourseDetails() {
   const router = useRouter();
@@ -10,7 +11,7 @@ export default function CourseDetails() {
 
   // Fetch Course Details from Backend
   useEffect(() => {
-    axios.get(`http://192.168.100.25:5000/courses/${id}`)
+    api.get(`/courses/${id}`)
       .then(response => setCourse(response.data))
       .catch(error => console.error("Error fetching course details:", error));
   }, [id]);

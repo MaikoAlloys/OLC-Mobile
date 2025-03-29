@@ -5,6 +5,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import { captureRef } from "react-native-view-shot";
 import * as MediaLibrary from "expo-media-library";
+import api from "./api";
 
 export default function Fees() {
   const router = useRouter();
@@ -24,7 +25,7 @@ export default function Fees() {
 
         const studentData = JSON.parse(studentToken);
 
-        const profileResponse = await axios.get(`http://192.168.100.25:5000/students/${studentData.id}`, {
+        const profileResponse = await api.get(`/students/${studentData.id}`, {
           headers: { Authorization: `Bearer ${studentData.token}` },
         });
 
@@ -32,7 +33,7 @@ export default function Fees() {
           setStudentFullName(`${profileResponse.data.first_name} ${profileResponse.data.last_name}`);
         }
 
-        const feesResponse = await axios.get(`http://192.168.100.25:5000/payments/fees/${studentData.id}`, {
+        const feesResponse = await api.get(`/payments/fees/${studentData.id}`, {
           headers: { Authorization: `Bearer ${studentData.token}` },
         });
 

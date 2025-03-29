@@ -3,6 +3,7 @@ import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import api from "./api";
 
 export default function StudentDashboard() {
   const router = useRouter();
@@ -14,7 +15,7 @@ export default function StudentDashboard() {
 
   // Fetch Courses from Backend
   useEffect(() => {
-    axios.get("http://192.168.100.25:5000/courses")
+    api.get("/courses")
       .then(response => {
         setCourses(response.data);
         setFilteredCourses(response.data);

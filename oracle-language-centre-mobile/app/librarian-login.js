@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityInd
 import axios from "axios";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import api from "./api";
 
 export default function LibrarianLogin() {
   const [username, setUsername] = useState("");
@@ -18,7 +19,7 @@ export default function LibrarianLogin() {
     setLoading(true);
     try {
       // Send login request
-      const response = await axios.post("http://192.168.100.25:5000/auth/librarian/login", { username, password });
+      const response = await api.post("/auth/librarian/login", { username, password });
 
       // Extract librarian data and token from the response
       const librarianData = {

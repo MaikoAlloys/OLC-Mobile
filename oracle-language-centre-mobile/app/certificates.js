@@ -1,10 +1,12 @@
-import { View, Text, TouchableOpacity, Alert, StyleSheet, ActivityIndicator, ScrollView } from "react-native";
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { View, Text, TouchableOpacity, Alert, StyleSheet, ActivityIndicator, ScrollView, Platform } from "react-native";
+import { useEffect, useState, useRef } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import { AntDesign } from "@expo/vector-icons";
-import generateCertificate from "../utils/generateCertificate";
+import { captureRef } from 'react-native-view-shot';
+import * as Sharing from 'expo-sharing';
+import * as MediaLibrary from 'expo-media-library';
+import api from "./api";
 
 export default function Certificates() {
     const router = useRouter();
@@ -12,6 +14,9 @@ export default function Certificates() {
     const [loading, setLoading] = useState(true);
     const [generating, setGenerating] = useState(false);
     const [studentId, setStudentId] = useState(null);
+    const [certificateDetails, setCertificateDetails] = useState(null);
+    const [showCertificate, setShowCertificate] = useState(false);
+    const certificateRef = useRef();
 
     useEffect(() => {
         const fetchCertificates = async () => {
@@ -25,16 +30,14 @@ export default function Certificates() {
                 const studentData = JSON.parse(studentToken);
                 setStudentId(studentData.id);
 
-                const response = await axios.get(
-                    `http://192.168.100.25:5000/payments/certificate-eligibility/${studentData.id}`,
-                    {
-                        headers: { Authorization: `Bearer ${studentData.token}` },
-                    }
+                const response = await api.get(
+                    `/payments/certificate-eligibility/${studentData.id}`,
+                    { headers: { Authorization: `Bearer ${studentData.token}` } }
                 );
                 setCertificates(response.data);
             } catch (error) {
                 console.error("Error fetching certificates:", error);
-                Alert.alert("Error", "Failed to fetch certificates");
+                Alert.alert("Error", error.response?.data?.message || "Failed to fetch certificates");
             } finally {
                 setLoading(false);
             }
@@ -43,30 +46,125 @@ export default function Certificates() {
         fetchCertificates();
     }, []);
 
-    const downloadCertificate = async (courseId, courseName) => {
+    const fetchCertificateDetails = async (courseId) => {
         setGenerating(true);
         try {
-            if (!studentId) {
-                throw new Error("Student information not available");
-            }
-            
-            Alert.alert("Generating", "Preparing your certificate...");
-            
-            const savedFilePath = await generateCertificate(
-                studentId,
-                courseId,
-                courseName
-            );
+            const studentToken = await AsyncStorage.getItem("studentToken");
+            const { token } = JSON.parse(studentToken);
 
-            Alert.alert("Success", `Certificate saved at: ${savedFilePath}`);
+            const response = await api.get(
+                `/payments/certificate-details/${studentId}/${courseId}`,
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
             
+            // Generate a certificate ID using studentId, courseId and current timestamp
+            const certificateId = `OLC-${studentId}-${courseId}-${Date.now()}`;
+            
+            setCertificateDetails({
+                ...response.data,
+                certificateId,
+                completionDate: response.data.issueDate // Using issueDate as completion date
+            });
+            setShowCertificate(true);
         } catch (error) {
-            console.error("Certificate generation error:", error);
-            Alert.alert("Error", error.message || "Failed to generate certificate");
+            console.error("Error fetching certificate details:", error);
+            Alert.alert("Error", error.response?.data?.message || "Failed to fetch certificate details");
         } finally {
             setGenerating(false);
         }
     };
+
+    const saveToGallery = async (uri) => {
+        try {
+            const { status } = await MediaLibrary.requestPermissionsAsync();
+            if (status !== 'granted') {
+                Alert.alert("Permission required", "Please allow access to your photos to save certificates");
+                return;
+            }
+            
+            const asset = await MediaLibrary.createAssetAsync(uri);
+            await MediaLibrary.createAlbumAsync('Certificates', asset, false);
+            Alert.alert("Success", "Certificate saved to your gallery!");
+        } catch (error) {
+            console.error("Error saving to gallery:", error);
+            Alert.alert("Error", "Failed to save certificate to gallery");
+        }
+    };
+
+    const handlePrintCertificate = async () => {
+        try {
+            const uri = await captureRef(certificateRef, {
+                format: 'png',
+                quality: 1,
+            });
+
+            Alert.alert(
+                "Save Certificate",
+                "Would you like to save or share your certificate?",
+                [
+                    {
+                        text: "Save to Gallery",
+                        onPress: () => saveToGallery(uri)
+                    },
+                    {
+                        text: "Share",
+                        onPress: () => Sharing.shareAsync(uri, {
+                            mimeType: 'image/png',
+                            dialogTitle: 'Share Certificate',
+                        })
+                    },
+                    {
+                        text: "Cancel",
+                        style: "cancel"
+                    }
+                ]
+            );
+        } catch (error) {
+            console.error("Error capturing certificate:", error);
+            Alert.alert("Error", "Failed to save certificate image");
+        }
+    };
+
+    const CertificateCard = ({ details }) => (
+        <View ref={certificateRef} style={styles.certificateContainer}>
+            <View style={styles.certificateHeader}>
+                <Text style={styles.certificateTitle}>Certificate of Completion</Text>
+                <Text style={styles.certificateSubtitle}>Oracle Language Centre</Text>
+            </View>
+            
+            <View style={styles.certificateBody}>
+                <Text style={styles.certificateText}>This is to certify that</Text>
+                <Text style={styles.certificateName}>{details.studentName}</Text>
+                <Text style={styles.certificateText}>has successfully completed the course</Text>
+                <Text style={styles.certificateCourse}>{details.courseName}</Text>
+                
+                <View style={styles.signatureContainer}>
+                    <View style={styles.signatureImage}>
+                        <Text style={styles.signatureText}>Oracle Language Centre</Text>
+                    </View>
+                    <View style={styles.signatureLine}></View>
+                    <Text style={styles.signatureLabel}>Authorized Signature</Text>
+                </View>
+                
+                <View style={styles.detailsContainer}>
+                    <Text style={styles.certificateDetail}>
+                        Issued on: {new Date(details.completionDate).toLocaleDateString('en-US', { 
+                            year: 'numeric', 
+                            month: 'long', 
+                            day: 'numeric' 
+                        })}
+                    </Text>
+                    <Text style={styles.certificateDetail}>
+                        Certificate ID: {details.certificateId}
+                    </Text>
+                </View>
+            </View>
+            
+            <View style={styles.certificateFooter}>
+                <Text style={styles.footerText}>Verified by Oracle Language Centre</Text>
+            </View>
+        </View>
+    );
 
     return (
         <ScrollView style={styles.container}>
@@ -83,40 +181,55 @@ export default function Certificates() {
                     <Text style={styles.emptyText}>No certificates available yet</Text>
                 </View>
             ) : (
-                certificates.map((cert, index) => (
-                    <View key={index} style={styles.card}>
-                        <Text style={styles.courseName}>{cert.course_name}</Text>
-                        <View style={styles.statusContainer}>
-                            {cert.eligible_for_certificate ? (
-                                <>
-                                    <View style={styles.eligibleBadge}>
-                                        <AntDesign name="checkcircle" size={16} color="#4CAF50" />
-                                        <Text style={styles.eligibleText}>Eligible</Text>
+                <>
+                    {certificates.map((cert, index) => (
+                        <View key={index} style={styles.card}>
+                            <Text style={styles.courseName}>{cert.course_name}</Text>
+                            <View style={styles.statusContainer}>
+                                {cert.eligible_for_certificate ? (
+                                    <>
+                                        <View style={styles.eligibleBadge}>
+                                            <AntDesign name="checkcircle" size={16} color="#4CAF50" />
+                                            <Text style={styles.eligibleText}>Eligible</Text>
+                                        </View>
+                                        <TouchableOpacity 
+                                            style={[styles.downloadButton, generating && styles.disabledButton]}
+                                            onPress={() => fetchCertificateDetails(cert.course_id)}
+                                            disabled={generating}
+                                        >
+                                            {generating ? (
+                                                <ActivityIndicator color="white" size="small" />
+                                            ) : (
+                                                <>
+                                                    <AntDesign name="download" size={16} color="white" />
+                                                    <Text style={styles.buttonText}>View Certificate</Text>
+                                                </>
+                                            )}
+                                        </TouchableOpacity>
+                                    </>
+                                ) : (
+                                    <View style={styles.notEligibleBadge}>
+                                        <AntDesign name="clockcircle" size={16} color="#FF9800" />
+                                        <Text style={styles.notEligibleText}>Not Eligible Yet</Text>
                                     </View>
-                                    <TouchableOpacity 
-                                        style={[styles.downloadButton, generating && styles.disabledButton]}
-                                        onPress={() => downloadCertificate(cert.course_id, cert.course_name)}
-                                        disabled={generating}
-                                    >
-                                        {generating ? (
-                                            <ActivityIndicator color="white" size="small" />
-                                        ) : (
-                                            <>
-                                                <AntDesign name="download" size={16} color="white" />
-                                                <Text style={styles.buttonText}>Download</Text>
-                                            </>
-                                        )}
-                                    </TouchableOpacity>
-                                </>
-                            ) : (
-                                <View style={styles.notEligibleBadge}>
-                                    <AntDesign name="clockcircle" size={16} color="#FF9800" />
-                                    <Text style={styles.notEligibleText}>Not Eligible Yet</Text>
-                                </View>
-                            )}
+                                )}
+                            </View>
                         </View>
-                    </View>
-                ))
+                    ))}
+
+                    {showCertificate && certificateDetails && (
+                        <View style={styles.certificateWrapper}>
+                            <CertificateCard details={certificateDetails} />
+                            <TouchableOpacity 
+                                style={styles.printButton}
+                                onPress={handlePrintCertificate}
+                            >
+                                <AntDesign name="save" size={20} color="white" />
+                                <Text style={styles.printButtonText}>Save/Share Certificate</Text>
+                            </TouchableOpacity>
+                        </View>
+                    )}
+                </>
             )}
         </ScrollView>
     );
@@ -221,5 +334,136 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: "#666",
         textAlign: "center",
+    },
+    certificateWrapper: {
+        marginTop: 30,
+        marginBottom: 50,
+        alignItems: 'center',
+    },
+    certificateContainer: {
+        width: '90%',
+        backgroundColor: '#fff',
+        borderRadius: 10,
+        overflow: 'hidden',
+        elevation: 5,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        shadowRadius: 4,
+        borderWidth: 1,
+        borderColor: '#e0e0e0',
+    },
+    certificateHeader: {
+        backgroundColor: '#4CAF50',
+        padding: 25,
+        alignItems: 'center',
+        borderBottomWidth: 2,
+        borderBottomColor: '#3d8b40',
+    },
+    certificateTitle: {
+        fontSize: 26,
+        fontWeight: 'bold',
+        color: 'white',
+        letterSpacing: 1,
+    },
+    certificateSubtitle: {
+        fontSize: 16,
+        color: 'rgba(255,255,255,0.8)',
+        marginTop: 5,
+        fontStyle: 'italic',
+    },
+    certificateBody: {
+        padding: 30,
+        alignItems: 'center',
+    },
+    certificateText: {
+        fontSize: 16,
+        color: '#555',
+        marginBottom: 5,
+        textAlign: 'center',
+    },
+    certificateName: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#2c3e50',
+        marginVertical: 20,
+        textDecorationLine: 'underline',
+        textDecorationColor: '#4CAF50',
+    },
+    certificateCourse: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: '#4CAF50',
+        marginVertical: 20,
+        textAlign: 'center',
+    },
+    signatureContainer: {
+        marginVertical: 30,
+        alignItems: 'center',
+        width: '100%',
+    },
+    signatureImage: {
+        marginBottom: 10,
+    },
+    signatureText: {
+        fontSize: 24,
+        color: '#333',
+        fontFamily: 'serif',
+        fontStyle: 'italic',
+        transform: [{ skewX: '-10deg' }],
+    },
+    signatureLine: {
+        width: 200,
+        height: 1,
+        backgroundColor: '#333',
+        marginBottom: 5,
+    },
+    signatureLabel: {
+        fontSize: 14,
+        color: '#777',
+        marginTop: 5,
+    },
+    detailsContainer: {
+        marginTop: 20,
+        width: '100%',
+        alignItems: 'center',
+    },
+    certificateDetail: {
+        fontSize: 14,
+        color: '#555',
+        marginVertical: 5,
+        textAlign: 'center',
+    },
+    certificateFooter: {
+        backgroundColor: '#f5f5f5',
+        padding: 15,
+        alignItems: 'center',
+        borderTopWidth: 1,
+        borderTopColor: '#e0e0e0',
+    },
+    footerText: {
+        fontSize: 14,
+        color: '#555',
+        fontStyle: 'italic',
+    },
+    printButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#2196F3',
+        paddingVertical: 12,
+        paddingHorizontal: 25,
+        borderRadius: 5,
+        marginTop: 20,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 3,
+        elevation: 3,
+    },
+    printButtonText: {
+        color: 'white',
+        fontWeight: '500',
+        marginLeft: 10,
+        fontSize: 16,
     },
 });

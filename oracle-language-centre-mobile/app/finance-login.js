@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from "reac
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
+import api from "./api";
 
 export default function FinanceLogin() {
   const [username, setUsername] = useState("");
@@ -12,7 +13,7 @@ export default function FinanceLogin() {
   // ✅ Finance Login Function
   const handleLogin = async () => {
     try {
-      const response = await axios.post("http://192.168.100.25:5000/auth/finance/login", { username, password });
+      const response = await api.post("/auth/finance/login", { username, password });
       
       const { token, financeManager } = response.data;
 

@@ -2,6 +2,7 @@ import { View, Text, StyleSheet, Alert } from "react-native";
 import { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import api from "./api";
 
 export default function Profile() {
   const [student, setStudent] = useState(null);
@@ -16,7 +17,7 @@ export default function Profile() {
         }
 
         const studentData = JSON.parse(studentToken);
-        const response = await axios.get(`http://192.168.100.25:5000/students/${studentData.id}`);
+        const response = await api.get(`/students/${studentData.id}`);
         setStudent(response.data);
       } catch (error) {
         console.error("❌ Error fetching profile:", error);

@@ -3272,16 +3272,9 @@ expo-constants@~17.0.5, expo-constants@~17.0.7, expo-constants@~17.0.8:
     "@expo/config" "~10.0.11"
     "@expo/env" "~0.4.2"
 
-expo-file-system@^18.0.12:
+expo-file-system@^18.0.12, expo-file-system@~18.0.11:
   version "18.0.12"
   resolved "https://registry.yarnpkg.com/expo-file-system/-/expo-file-system-18.0.12.tgz#6ceeeb0725f6c5faaf58112f18c073c2acfb3027"
-  integrity sha512-HAkrd/mb8r+G3lJ9MzmGeuW2B+BxQR1joKfeCyY4deLl1zoZ48FrAWjgZjHK9aHUVhJ0ehzInu/NQtikKytaeg==
-  dependencies:
-    web-streams-polyfill "^3.3.2"
-
-expo-file-system@~18.0.11:
-  version "18.0.12"
-  resolved "https://registry.npmjs.org/expo-file-system/-/expo-file-system-18.0.12.tgz"
   integrity sha512-HAkrd/mb8r+G3lJ9MzmGeuW2B+BxQR1joKfeCyY4deLl1zoZ48FrAWjgZjHK9aHUVhJ0ehzInu/NQtikKytaeg==
   dependencies:
     web-streams-polyfill "^3.3.2"
@@ -3311,9 +3304,9 @@ expo-linking@~7.0.5:
     expo-constants "~17.0.5"
     invariant "^2.2.4"
 
-expo-media-library@~17.0.6:
+expo-media-library@^17.0.6:
   version "17.0.6"
-  resolved "https://registry.npmjs.org/expo-media-library/-/expo-media-library-17.0.6.tgz"
+  resolved "https://registry.yarnpkg.com/expo-media-library/-/expo-media-library-17.0.6.tgz#355f5f5abf0b5b35cdf009f18567cbba12d8dc82"
   integrity sha512-LUnfrddmee1xLOkyG2NN1l9xQbtvMX3fbM1brEGHg0SKSndvjod3FQdhTzZEYAariqW2RSxQR8v1IsheIoLQXg==
 
 expo-modules-autolinking@2.0.8:
@@ -3355,6 +3348,11 @@ expo-router@^4.0.19:
     schema-utils "^4.0.1"
     semver "~7.6.3"
     server-only "^0.0.1"
+
+expo-sharing@^13.0.1:
+  version "13.0.1"
+  resolved "https://registry.yarnpkg.com/expo-sharing/-/expo-sharing-13.0.1.tgz#f5221ce44190a12649a6639e619d83e318c768a1"
+  integrity sha512-qych3Nw65wlFcnzE/gRrsdtvmdV0uF4U4qVMZBJYPG90vYyWh2QM9rp1gVu0KWOBc7N8CC2dSVYn4/BXqJy6Xw==
 
 expo-splash-screen@~0.29.22:
   version "0.29.22"
@@ -6004,7 +6002,7 @@ react-native-vector-icons@^10.2.0:
 
 react-native-view-shot@^4.0.3:
   version "4.0.3"
-  resolved "https://registry.npmjs.org/react-native-view-shot/-/react-native-view-shot-4.0.3.tgz"
+  resolved "https://registry.yarnpkg.com/react-native-view-shot/-/react-native-view-shot-4.0.3.tgz#9b98388fcc5228073cb66ac98ca339eda35767ac"
   integrity sha512-USNjYmED7C0me02c1DxKA0074Hw+y/nxo+xJKlffMvfUWWzL5ELh/TJA/pTnVqFurIrzthZDPtDM7aBFJuhrHQ==
   dependencies:
     html2canvas "^1.4.1"

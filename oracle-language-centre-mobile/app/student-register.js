@@ -2,6 +2,7 @@ import { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from "react-native";
 import axios from "axios";
 import { useRouter } from "expo-router";
+import api from "./api";
 
 export default function StudentRegister() {
   const [form, setForm] = useState({ username: "", first_name: "", last_name: "", email: "", phone: "", password: "" });
@@ -22,7 +23,7 @@ export default function StudentRegister() {
     }
 
     try {
-      await axios.post("http://192.168.100.25:5000/auth/student/register", form);
+      await api.post("/auth/student/register", form);
       Alert.alert("Success", "Registration successful. Wait for admin approval.");
       router.push("/student-login");
     } catch (error) {

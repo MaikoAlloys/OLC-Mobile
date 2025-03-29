@@ -16,7 +16,9 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.alloys.oraclelanguagecentre",
+      "permissions": ["INTERNET"]
     },
     "web": {
       "bundler": "metro",
@@ -36,6 +38,11 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "9e716154-ad58-4a2e-b6ff-378d50c755ba"
+      }
     }
   }
 }

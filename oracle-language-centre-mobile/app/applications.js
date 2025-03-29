@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { View, Text, FlatList, StyleSheet, ActivityIndicator } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import api from "./api";
 
 export default function Applications() {
   const [applications, setApplications] = useState([]);
@@ -19,7 +20,7 @@ export default function Applications() {
         const studentData = JSON.parse(studentToken);
         const studentId = studentData.id;
 
-        const response = await axios.get(`http://192.168.100.25:5000/applications/${studentId}`);
+        const response = await api.get(`/applications/${studentId}`);
         const fetchedApplications = response.data;
 
         if (Array.isArray(fetchedApplications) && fetchedApplications.length > 0) {

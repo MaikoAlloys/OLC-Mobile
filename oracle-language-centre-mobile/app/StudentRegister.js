@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from "react-native";
 import axios from "axios";
+import api from "./api";
 
 const StudentRegister = ({ navigation }) => {
   const [form, setForm] = useState({ username: "", first_name: "", last_name: "", email: "", phone: "", password: "" });
 
   const handleRegister = async () => {
     try {
-      await axios.post("http://192.168.100.25:5000/auth/student/register", form);
+      await api.post("/auth/student/register", form);
       Alert.alert("Success", "Registration successful. Wait for admin approval.");
       navigation.navigate("StudentLogin");
     } catch (error) {

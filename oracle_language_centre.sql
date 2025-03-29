@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 28, 2025 at 04:07 PM
+-- Generation Time: Mar 29, 2025 at 01:06 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -229,7 +229,9 @@ CREATE TABLE `payments` (
 
 INSERT INTO `payments` (`id`, `student_id`, `course_id`, `payment_method`, `reference_code`, `location`, `birth_year`, `id_number`, `status`, `created_at`, `amount_paid`) VALUES
 (17, 11, 4, 'mpesa', 'QWERTE231T', 'Nairobi ', 2002, '40217945', 'approved', '2025-03-28 13:40:40', 2500.00),
-(18, 11, 4, 'mpesa', 'QWEKTRDES1', NULL, NULL, NULL, 'approved', '2025-03-28 14:29:11', 2500.00);
+(18, 11, 4, 'mpesa', 'QWEKTRDES1', NULL, NULL, NULL, 'approved', '2025-03-28 14:29:11', 2500.00),
+(19, 3, 1, 'mpesa', 'QWERT45ERD', 'Nairobi ', 2002, '40217945', 'approved', '2025-03-29 11:38:54', 2500.00),
+(20, 3, 1, 'mpesa', 'QWER43FTR4', NULL, NULL, NULL, 'approved', '2025-03-29 11:51:09', 2500.00);
 
 -- --------------------------------------------------------
 
@@ -253,7 +255,8 @@ CREATE TABLE `resource_requests` (
 --
 
 INSERT INTO `resource_requests` (`id`, `student_id`, `course_id`, `requested_at`, `librarian_submitted`, `student_confirmed`, `resource_id`, `status`) VALUES
-(39, 11, 4, '2025-03-28 13:49:35', 1, 1, 10, 'submitted');
+(39, 11, 4, '2025-03-28 13:49:35', 1, 1, 10, 'submitted'),
+(40, 3, 1, '2025-03-29 11:43:37', 1, 1, 2, 'submitted');
 
 -- --------------------------------------------------------
 
@@ -298,7 +301,8 @@ CREATE TABLE `student_attendance` (
 --
 
 INSERT INTO `student_attendance` (`id`, `student_id`, `tutor_id`, `course_id`, `attended_at`) VALUES
-(10, 11, 2, 4, '2025-03-28 13:48:50');
+(10, 11, 2, 4, '2025-03-28 13:48:50'),
+(11, 3, 3, 1, '2025-03-29 11:43:26');
 
 -- --------------------------------------------------------
 
@@ -320,7 +324,8 @@ CREATE TABLE `student_tutors` (
 --
 
 INSERT INTO `student_tutors` (`id`, `student_id`, `tutor_id`, `assigned_at`, `status`, `course_id`) VALUES
-(33, 11, 2, '2025-03-28 13:43:56', 'completed', 4);
+(33, 11, 2, '2025-03-28 13:43:56', 'completed', 4),
+(34, 3, 3, '2025-03-29 11:41:07', 'completed', 1);
 
 -- --------------------------------------------------------
 
@@ -386,7 +391,8 @@ INSERT INTO `users` (`id`, `username`, `first_name`, `last_name`, `email`, `phon
 (1, 'test_user', 'Test', 'User', 'test@example.com', '0712345678', 'hashedpassword123', 1, 'student', '2025-03-20 05:02:27'),
 (2, 'Alloys', 'Alloys', 'Maiko', 'maikoa052@gmail.com', '0796901211', '$2b$10$mY29jNBM8oxlP7t6Mbtx4eW2Kcj4i/J.G95SENi8zc4tEZjumCWui', 1, 'student', '2025-03-20 05:11:25'),
 (3, 'Phoebe ', 'Phoebe', 'Siaka', 'phoebensiaka@gmail.com', '0745022309', '$2b$10$OpRKu6TL9V0p/d0sFTOam.uIQ4LapW.kLN50WoJ3g0HSaSBIRiYzu', 1, 'student', '2025-03-20 05:36:33'),
-(11, 'Felix', 'Felix', 'Wamunyoro ', 'Felixwamunyoro@gmail.com', '0796901211', '$2b$10$4ypfIkGADSIFNPtARxhmCe.vcqYXAZz.MilL9v0foAZeCeCruF.Fy', 1, 'student', '2025-03-28 13:36:06');
+(11, 'Felix', 'Felix', 'Wamunyoro ', 'Felixwamunyoro@gmail.com', '0796901211', '$2b$10$4ypfIkGADSIFNPtARxhmCe.vcqYXAZz.MilL9v0foAZeCeCruF.Fy', 1, 'student', '2025-03-28 13:36:06'),
+(12, 'Omwando', 'Omwando ', 'Ishmael', 'Ishamael@gmail.com', '0796901211', '$2b$10$OjZ5pAykRr.3e6zjy58S5OAJ6D10Ec.hF9LoNWnhPb5eauMZbyUwG', 0, 'student', '2025-03-28 21:07:55');
 
 --
 -- Indexes for dumped tables
@@ -547,13 +553,13 @@ ALTER TABLE `librarians`
 -- AUTO_INCREMENT for table `payments`
 --
 ALTER TABLE `payments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `resource_requests`
 --
 ALTER TABLE `resource_requests`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
 
 --
 -- AUTO_INCREMENT for table `storekeepers`
@@ -571,13 +577,13 @@ ALTER TABLE `students`
 -- AUTO_INCREMENT for table `student_attendance`
 --
 ALTER TABLE `student_attendance`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `student_tutors`
 --
 ALTER TABLE `student_tutors`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
 
 --
 -- AUTO_INCREMENT for table `suppliers`
@@ -595,7 +601,7 @@ ALTER TABLE `tutors`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- Constraints for dumped tables

@@ -2,6 +2,7 @@ import { View, Text, StyleSheet, Alert } from "react-native";
 import { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import api from "./api";
 
 export default function TutorProfile() {
   const [tutor, setTutor] = useState(null);
@@ -16,7 +17,7 @@ export default function TutorProfile() {
         }
 
         const tutorData = JSON.parse(tutorToken);
-        const response = await axios.get(`http://192.168.100.25:5000/tutors/${tutorData.id}`);
+        const response = await api.get(`/tutors/${tutorData.id}`);
         setTutor(response.data);
       } catch (error) {
         console.error("❌ Error fetching profile:", error);

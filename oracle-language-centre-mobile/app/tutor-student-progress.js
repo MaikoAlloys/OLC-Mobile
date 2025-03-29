@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Alert } from "react-native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
+import api from "./api";
 
 export default function TutorStudentProgress() {
   const router = useRouter();
@@ -23,7 +24,7 @@ export default function TutorStudentProgress() {
       }
       
       const tokenData = JSON.parse(tutorToken);
-      const response = await axios.get("http://192.168.100.25:5000/tutors/students-in-progress", {
+      const response = await api.get("/tutors/students-in-progress", {
         headers: { Authorization: `Bearer ${tokenData.token}` },
       });
 

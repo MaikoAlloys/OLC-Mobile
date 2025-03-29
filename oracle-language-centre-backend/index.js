@@ -68,12 +68,20 @@ app.use((req, res) => {
   res.status(404).json({ message: "❌ Endpoint not found" });
 });
 
-// ✅ Start Server
+// // ✅ Start Server
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
+
+
+//added for testing duckdns
+// app.listen(PORT, '0.0.0.0', () => {
+//   console.log(`🚀 Server running on port ${PORT}`);
+// });
+
 
 // ✅ Serve Certificates Folder
 const path = require("path");
 app.use("/certificates", express.static(path.join(__dirname, "certificates")));
 console.log("✅ Serving certificates from /certificates");
+

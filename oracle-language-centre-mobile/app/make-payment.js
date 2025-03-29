@@ -4,6 +4,7 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { Picker } from "@react-native-picker/picker";
+import api from "./api";
 
 export default function MakePayment() {
     const router = useRouter();
@@ -70,8 +71,8 @@ export default function MakePayment() {
 
             console.log("Sending payment request with:", payload);
 
-            const response = await axios.post(
-                "http://192.168.100.25:5000/payments/additional",
+            const response = await api.post(
+                "/payments/additional",
                 payload,
                 config
             );

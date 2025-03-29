@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage"; // ✅ FIX: Import AsyncStorage
 import { useRouter, useLocalSearchParams } from "expo-router";
+import api from "./api";
 
 export default function HODAssignedStudentDetails() {
   const router = useRouter();
@@ -27,7 +28,7 @@ export default function HODAssignedStudentDetails() {
       }
 
       const tokenData = JSON.parse(hodToken);
-      const response = await axios.get(`http://192.168.100.25:5000/hod/assigned-student/${id}`, {
+      const response = await api.get(`/hod/assigned-student/${id}`, {
         headers: { Authorization: `Bearer ${tokenData.token}` },
       });
 
