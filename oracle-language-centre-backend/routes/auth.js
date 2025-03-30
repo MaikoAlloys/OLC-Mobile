@@ -250,4 +250,79 @@ router.post("/librarian/login", async (req, res) => {
     }
 });
 
+
+// Storekeeper Login API
+router.post("/storekeeper/login", async (req, res) => {
+    const { username, password } = req.body;
+  
+    if (!username || !password) {
+        return res.status(400).json({ message: "Username and password are required" });
+    }
+  
+    try {
+        // ✅ Use .promise().query() to return a Promise
+        const [rows] = await db.promise().query("SELECT * FROM storekeepers WHERE username = ?", [username]);
+
+        if (rows.length === 0) {
+            return res.status(401).json({ message: "Invalid username or password" });
+        }
+
+        const user = rows[0]; // Extract first result
+
+        // Compare password
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(401).json({ message: "Invalid username or password" });
+        }
+
+        // Generate JWT token
+        const token = jwt.sign({ id: user.id, role: "storekeeper" }, process.env.JWT_SECRET, { expiresIn: "1h" });
+
+        res.json({ message: "Login successful", token });
+    } catch (error) {
+        console.error("🔥 Login Error:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
+  
+//supplier login api
+// ✅ Supplier Login (Ensures Token is Returned)
+router.post("/supplier/login", async (req, res) => {
+    const { username, password } = req.body;
+
+    if (!username || !password) {
+        return res.status(400).json({ message: "Username and password are required" });
+    }
+
+    try {
+        db.query("SELECT * FROM suppliers WHERE username = ?", [username], async (err, results) => {
+            if (err) return res.status(500).json({ message: "Database error", error: err });
+
+            if (results.length === 0) {
+                return res.status(400).json({ message: "Supplier not found" });
+            }
+
+            const supplier = results[0];
+
+            const isMatch = await bcrypt.compare(password, supplier.password);
+            if (!isMatch) {
+                return res.status(401).json({ message: "Invalid credentials" });
+            }
+
+            const token = jwt.sign({ id: supplier.id, role: "supplier" }, process.env.JWT_SECRET, { expiresIn: "1d" });
+
+            console.log("✅ Token Generated:", token);
+
+            res.json({
+                message: "Login successful",
+                token,
+                supplier: { id: supplier.id, username: supplier.username },
+            });
+        });
+    } catch (error) {
+        res.status(500).json({ message: "Server error", error });
+    }
+});
+
 module.exports = router;

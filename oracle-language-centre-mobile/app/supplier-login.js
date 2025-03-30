@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from "react-native";
-import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import api from "./api";
 
@@ -11,9 +11,14 @@ export default function SupplierLogin() {
 
   const handleLogin = async () => {
     try {
-      const response = await api.post("/auth/employee/login", { username, password });
+      const response = await api.post("/auth/supplier/login", { username, password });
+
+      // Store token & supplier ID
+      await AsyncStorage.setItem("token", response.data.token);
+      await AsyncStorage.setItem("supplierId", response.data.supplier.id.toString());
+
       Alert.alert("Success", "Login successful!");
-      router.push("/dashboard");
+      router.push("/supplier-dashboard"); // Redirect to supplier dashboard
     } catch (error) {
       Alert.alert("Error", error.response?.data?.message || "Login failed");
     }
@@ -33,7 +38,7 @@ export default function SupplierLogin() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#f5f5f5" },
-  title: { fontSize: 24, fontWeight: "bold", marginBottom: 20 },
+  title: { fontSize: 24, marginBottom: 20 },
   input: { width: "80%", padding: 10, borderWidth: 1, marginBottom: 10, borderRadius: 5 },
   button: { backgroundColor: "#007bff", padding: 15, width: "80%", alignItems: "center", borderRadius: 5 },
   buttonText: { color: "#fff", fontSize: 18 },

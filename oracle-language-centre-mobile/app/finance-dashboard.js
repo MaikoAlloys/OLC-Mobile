@@ -71,6 +71,9 @@ export default function FinanceDashboard() {
           <TouchableOpacity onPress={() => router.push("/approved-students")}>
             <Text style={styles.navItem}>Approved Students</Text>
           </TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push("/finance-supplier-payment")}>
+            <Text style={styles.navItem}>Supplier payment</Text>
+          </TouchableOpacity>
           <TouchableOpacity onPress={() => router.push("/cleared-students")}>
             <Text style={styles.navItem}>Cleared Students</Text>
           </TouchableOpacity>

@@ -40,7 +40,7 @@ export default function StudentActiveCourse() {
           setActiveCourse(null);
         }
       } catch (error) {
-        console.error("Error fetching active course:", error.message);
+        // console.error("Error fetching active course:", error.message);
         setError(error.message);
         Alert.alert("Error", error.message);
       } finally {
@@ -90,7 +90,7 @@ export default function StudentActiveCourse() {
         Alert.alert("Error", response.data.message);
       }
     } catch (error) {
-      console.error("Error marking attendance:", error);
+      // console.error("Error marking attendance:", error);
       let errorMessage = "Failed to mark attendance";
       if (error.response) {
         errorMessage = error.response.data?.message || 

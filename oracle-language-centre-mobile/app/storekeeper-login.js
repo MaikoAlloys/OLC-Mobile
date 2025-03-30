@@ -11,9 +11,9 @@ export default function StorekeeperLogin() {
 
   const handleLogin = async () => {
     try {
-      const response = await api.post("/auth/employee/login", { username, password });
+      const response = await api.post("/auth/storekeeper/login", { username, password });
       Alert.alert("Success", "Login successful!");
-      router.push("/dashboard");
+      router.push("/storekeeper-dashboard");
     } catch (error) {
       Alert.alert("Error", error.response?.data?.message || "Login failed");
     }

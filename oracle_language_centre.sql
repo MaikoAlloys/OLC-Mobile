@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 29, 2025 at 01:06 PM
+-- Generation Time: Mar 30, 2025 at 11:49 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -266,8 +266,92 @@ INSERT INTO `resource_requests` (`id`, `student_id`, `course_id`, `requested_at`
 
 CREATE TABLE `storekeepers` (
   `id` int(11) NOT NULL,
-  `name` varchar(100) NOT NULL
+  `username` varchar(50) NOT NULL,
+  `first_name` varchar(100) NOT NULL,
+  `last_name` varchar(100) NOT NULL,
+  `email` varchar(150) NOT NULL,
+  `phone` varchar(15) NOT NULL,
+  `password` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `storekeepers`
+--
+
+INSERT INTO `storekeepers` (`id`, `username`, `first_name`, `last_name`, `email`, `phone`, `password`) VALUES
+(1, 'Kelvin', 'Kelvin', 'Kang\'ethe', 'kelvin.kangethe@gmail.com', '0796543281', '$2b$10$Cp2R3lGQGcLMDRjwfEMOquOFNGdLpB2bD1nLmeyAQb2P90BwNOLeG');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `store_items`
+--
+
+CREATE TABLE `store_items` (
+  `id` int(11) NOT NULL,
+  `category` varchar(100) NOT NULL,
+  `item_name` varchar(255) NOT NULL,
+  `quantity` int(11) DEFAULT 0,
+  `description` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `cost` decimal(10,2) NOT NULL DEFAULT 0.00
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `store_items`
+--
+
+INSERT INTO `store_items` (`id`, `category`, `item_name`, `quantity`, `description`, `created_at`, `cost`) VALUES
+(1, 'Learning Materials', 'Textbooks (Swahili Grammar, Arabic Guide)', 50, 'Language textbooks for students', '2025-03-30 06:48:33', 1500.00),
+(2, 'Learning Materials', 'Workbooks & Exercise Books', 63, 'Practice workbooks for language learners', '2025-03-30 06:48:33', 800.00),
+(3, 'Learning Materials', 'Language Flashcards', 60, 'Flashcards for vocabulary learning', '2025-03-30 06:48:33', 1200.00),
+(4, 'Learning Materials', 'Digital Learning Resources (USBs with lessons)', 30, 'USBs with recorded lessons and digital content', '2025-03-30 06:48:33', 2500.00),
+(5, 'Audio-Visual Aids', 'Headphones & Earphones', 20, 'Used for listening to language recordings', '2025-03-30 06:48:33', 3000.00),
+(6, 'Audio-Visual Aids', 'Microphones', 15, 'For pronunciation practice and recording lessons', '2025-03-30 06:48:33', 4500.00),
+(7, 'Audio-Visual Aids', 'Speakers', 20, 'Used in classrooms for audio lessons', '2025-03-30 06:48:33', 7000.00),
+(8, 'Audio-Visual Aids', 'Projectors & Screens', 5, 'For displaying video lessons and presentations', '2025-03-30 06:48:33', 25000.00),
+(9, 'IT & Digital Equipment', 'Computers & Laptops', 10, 'Used by students and instructors for research', '2025-03-30 06:48:33', 60000.00),
+(10, 'IT & Digital Equipment', 'Tablets', 8, 'For interactive language learning', '2025-03-30 06:48:33', 35000.00),
+(11, 'IT & Digital Equipment', 'Printers & Scanners', 3, 'For printing and scanning documents', '2025-03-30 06:48:33', 15000.00),
+(12, 'IT & Digital Equipment', 'External Hard Drives & USBs', 15, 'For storing learning materials', '2025-03-30 06:48:33', 5000.00),
+(13, 'Classroom Supplies', 'Whiteboards & Markers', 12, 'For writing lessons and explanations', '2025-03-30 06:48:33', 4000.00),
+(14, 'Classroom Supplies', 'Chalk & Chalkboards', 10, 'For traditional classroom learning', '2025-03-30 06:48:33', 2000.00),
+(15, 'Classroom Supplies', 'Desks & Chairs', 50, 'Seating for students and instructors', '2025-03-30 06:48:33', 8000.00),
+(16, 'Classroom Supplies', 'Posters & Wall Charts', 20, 'Educational charts for language learning', '2025-03-30 06:48:33', 1500.00),
+(17, 'Office Supplies', 'Pens, Pencils & Erasers', 100, 'Basic writing materials', '2025-03-30 06:48:33', 50.00),
+(18, 'Office Supplies', 'Notebooks & Files', 80, 'For taking notes and storing documents', '2025-03-30 06:48:33', 300.00),
+(19, 'Office Supplies', 'Staplers & Paper Clips', 30, 'Office stationery for document organization', '2025-03-30 06:48:33', 500.00),
+(20, 'Office Supplies', 'Envelopes & Printing Paper', 50, 'Used for official communication and printing', '2025-03-30 06:48:33', 700.00),
+(21, 'Maintenance & Utilities', 'Cleaning Supplies', 20, 'Detergents, mops, and other cleaning materials', '2025-03-30 06:48:33', 1500.00),
+(22, 'Maintenance & Utilities', 'First Aid Kits', 5, 'For handling minor injuries', '2025-03-30 06:48:33', 5000.00),
+(23, 'Maintenance & Utilities', 'Electrical Accessories', 10, 'Extension cables, adapters, etc.', '2025-03-30 06:48:33', 3000.00),
+(24, 'Maintenance & Utilities', 'Security Equipment', 8, 'Locks, CCTV cameras, and safety measures', '2025-03-30 06:48:33', 20000.00);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `store_requests`
+--
+
+CREATE TABLE `store_requests` (
+  `id` int(11) NOT NULL,
+  `storekeeper_id` int(11) NOT NULL,
+  `item_id` int(11) NOT NULL,
+  `supplier_id` int(11) NOT NULL,
+  `quantity_requested` int(11) NOT NULL,
+  `total_cost` decimal(10,2) NOT NULL,
+  `status` enum('pending','approved','rejected','received') DEFAULT 'pending',
+  `requested_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `store_requests`
+--
+
+INSERT INTO `store_requests` (`id`, `storekeeper_id`, `item_id`, `supplier_id`, `quantity_requested`, `total_cost`, `status`, `requested_at`) VALUES
+(1, 1, 15, 1, 2, 16000.00, 'rejected', '2025-03-30 08:37:18'),
+(2, 1, 2, 1, 23, 18400.00, 'received', '2025-03-30 08:45:21'),
+(3, 1, 7, 2, 10, 70000.00, 'received', '2025-03-30 09:10:47');
 
 -- --------------------------------------------------------
 
@@ -335,9 +419,45 @@ INSERT INTO `student_tutors` (`id`, `student_id`, `tutor_id`, `assigned_at`, `st
 
 CREATE TABLE `suppliers` (
   `id` int(11) NOT NULL,
-  `name` varchar(100) NOT NULL,
-  `company` varchar(100) DEFAULT NULL
+  `username` varchar(50) NOT NULL,
+  `first_name` varchar(100) NOT NULL,
+  `last_name` varchar(100) NOT NULL,
+  `email` varchar(150) NOT NULL,
+  `phone` varchar(15) NOT NULL,
+  `password` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `suppliers`
+--
+
+INSERT INTO `suppliers` (`id`, `username`, `first_name`, `last_name`, `email`, `phone`, `password`) VALUES
+(1, 'Atoti', 'Atoti', 'Mwangi', 'atotimwangi@gmail.com', '0798654023', '$2b$10$nj.HqSDiwXxVvJ8tAhI/LuBAZD1imtVPpU1FHoQOYdgM40FaYqcNG'),
+(2, 'Webukulu', 'Webukulu', 'Kelvin', 'webukulu.kelvin@gmail.com', '0793124587', '$2b$10$trobHmhy5wo8WLIATkO3q.ePtcIA37LFcY7TMpGaSvh.kVl0i5XCy');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `supplier_payments`
+--
+
+CREATE TABLE `supplier_payments` (
+  `id` int(11) NOT NULL,
+  `supplier_id` int(11) NOT NULL,
+  `total_cost` decimal(10,2) NOT NULL,
+  `payment_method` enum('mpesa','bank') NOT NULL,
+  `payment_reference` varchar(20) NOT NULL,
+  `payment_date` timestamp NOT NULL DEFAULT current_timestamp(),
+  `request_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `supplier_payments`
+--
+
+INSERT INTO `supplier_payments` (`id`, `supplier_id`, `total_cost`, `payment_method`, `payment_reference`, `payment_date`, `request_id`) VALUES
+(7, 2, 18400.00, 'mpesa', 'QWERT6Y765', '2025-03-30 19:48:51', 2),
+(9, 2, 70000.00, 'mpesa', 'QWERTY2357', '2025-03-30 20:13:00', 3);
 
 -- --------------------------------------------------------
 
@@ -462,7 +582,25 @@ ALTER TABLE `resource_requests`
 -- Indexes for table `storekeepers`
 --
 ALTER TABLE `storekeepers`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `username` (`username`),
+  ADD UNIQUE KEY `email` (`email`),
+  ADD UNIQUE KEY `phone` (`phone`);
+
+--
+-- Indexes for table `store_items`
+--
+ALTER TABLE `store_items`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `store_requests`
+--
+ALTER TABLE `store_requests`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `storekeeper_id` (`storekeeper_id`),
+  ADD KEY `item_id` (`item_id`),
+  ADD KEY `fk_supplier` (`supplier_id`);
 
 --
 -- Indexes for table `students`
@@ -491,7 +629,18 @@ ALTER TABLE `student_tutors`
 -- Indexes for table `suppliers`
 --
 ALTER TABLE `suppliers`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `username` (`username`),
+  ADD UNIQUE KEY `email` (`email`),
+  ADD UNIQUE KEY `phone` (`phone`);
+
+--
+-- Indexes for table `supplier_payments`
+--
+ALTER TABLE `supplier_payments`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `supplier_id` (`supplier_id`),
+  ADD KEY `FK_request_id` (`request_id`);
 
 --
 -- Indexes for table `tutors`
@@ -565,7 +714,19 @@ ALTER TABLE `resource_requests`
 -- AUTO_INCREMENT for table `storekeepers`
 --
 ALTER TABLE `storekeepers`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `store_items`
+--
+ALTER TABLE `store_items`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+
+--
+-- AUTO_INCREMENT for table `store_requests`
+--
+ALTER TABLE `store_requests`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `students`
@@ -589,7 +750,13 @@ ALTER TABLE `student_tutors`
 -- AUTO_INCREMENT for table `suppliers`
 --
 ALTER TABLE `suppliers`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `supplier_payments`
+--
+ALTER TABLE `supplier_payments`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `tutors`
@@ -628,6 +795,14 @@ ALTER TABLE `resource_requests`
   ADD CONSTRAINT `resource_requests_ibfk_2` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE CASCADE;
 
 --
+-- Constraints for table `store_requests`
+--
+ALTER TABLE `store_requests`
+  ADD CONSTRAINT `fk_supplier` FOREIGN KEY (`supplier_id`) REFERENCES `suppliers` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `store_requests_ibfk_1` FOREIGN KEY (`storekeeper_id`) REFERENCES `storekeepers` (`id`),
+  ADD CONSTRAINT `store_requests_ibfk_2` FOREIGN KEY (`item_id`) REFERENCES `store_items` (`id`);
+
+--
 -- Constraints for table `student_attendance`
 --
 ALTER TABLE `student_attendance`
@@ -641,6 +816,13 @@ ALTER TABLE `student_attendance`
 ALTER TABLE `student_tutors`
   ADD CONSTRAINT `student_tutors_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `users` (`id`),
   ADD CONSTRAINT `student_tutors_ibfk_2` FOREIGN KEY (`tutor_id`) REFERENCES `tutors` (`id`);
+
+--
+-- Constraints for table `supplier_payments`
+--
+ALTER TABLE `supplier_payments`
+  ADD CONSTRAINT `FK_request_id` FOREIGN KEY (`request_id`) REFERENCES `store_requests` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `supplier_payments_ibfk_1` FOREIGN KEY (`supplier_id`) REFERENCES `suppliers` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

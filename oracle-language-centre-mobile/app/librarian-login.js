@@ -39,7 +39,7 @@ export default function LibrarianLogin() {
       Alert.alert("Success", "Login successful!");
       router.push("/librarian-dashboard");
     } catch (error) {
-      console.error("❌ Librarian Login Error:", error.response?.data || error.message);
+      // console.error("❌ Librarian Login Error:", error.response?.data || error.message);
 
       // Handle errors based on response status
       const status = error.response?.status;
