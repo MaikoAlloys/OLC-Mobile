@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import api from "./api";
 import {
   View,
@@ -9,9 +9,11 @@ import {
   StyleSheet,
   ActivityIndicator,
   Alert,
+  Platform,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { captureRef } from 'react-native-view-shot';
+import * as MediaLibrary from 'expo-media-library';
 
 // Simple JWT decoder (no library needed)
 const decodeJWT = (token) => {
@@ -39,7 +41,7 @@ const SupplierPayment = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [supplierId, setSupplierId] = useState(null);
-  const receiptRef = React.useRef();
+  const receiptRef = useRef(null);
 
   useEffect(() => {
     const getSupplierId = async () => {
@@ -79,14 +81,11 @@ const SupplierPayment = () => {
       });
 
       if (Array.isArray(response.data)) {
-        console.log("✅ Payments Fetched:", response.data);
         setPayments(response.data);
       } else {
-        console.warn("Unexpected response structure:", response.data);
         setError("Unexpected data format received");
       }
     } catch (error) {
-      console.error("❌ Error Fetching Payments:", error);
       setError(error.response?.data?.message || "Failed to fetch payments");
     } finally {
       setLoading(false);
@@ -111,16 +110,34 @@ const SupplierPayment = () => {
 
   const downloadReceipt = async () => {
     try {
+      // Request permissions
+      if (Platform.OS === 'android') {
+        const { status } = await MediaLibrary.requestPermissionsAsync();
+        if (status !== 'granted') {
+          Alert.alert("Permission required", "Please allow access to save receipts to your gallery");
+          return;
+        }
+      }
+
+      // Wait for the receiptRef to be available
+      if (!receiptRef.current) {
+        throw new Error("Receipt reference not available");
+      }
+
+      // Capture only the receipt section
       const uri = await captureRef(receiptRef, {
         format: 'png',
         quality: 1,
       });
-      Alert.alert("Success", "Receipt downloaded successfully!");
-      console.log("Receipt saved to:", uri);
-      // Here you would typically save the image to the device's storage
+
+      // Save to gallery
+      const asset = await MediaLibrary.createAssetAsync(uri);
+      await MediaLibrary.createAlbumAsync('Receipts', asset, false);
+      
+      Alert.alert("Success", "Receipt saved to your gallery!");
     } catch (error) {
-      console.error("Error capturing receipt:", error);
-      Alert.alert("Error", "Failed to download receipt");
+      console.error("Error saving receipt:", error);
+      Alert.alert("Error", "Failed to save receipt to gallery");
     }
   };
 
@@ -206,7 +223,7 @@ const SupplierPayment = () => {
                   style={[styles.button, styles.cancelButton]}
                   onPress={closeModal}
                 >
-                  <Text style={styles.buttonText}>Cancel</Text>
+                  <Text style={styles.cancelButtonText}>Cancel</Text>
                 </TouchableOpacity>
                 <TouchableOpacity 
                   style={[styles.button, styles.confirmButton]}
@@ -220,9 +237,9 @@ const SupplierPayment = () => {
         </View>
       </Modal>
 
-      {/* Receipt Modal */}
+      {/* Receipt Modal - This is the section we'll capture */}
       <Modal visible={isReceiptVisible} animationType="slide">
-        <View style={styles.receiptContainer} ref={receiptRef}>
+        <View style={styles.receiptContainer} ref={receiptRef} collapsable={false}>
           {selectedPayment && (
             <>
               <Text style={styles.receiptHeader}>PAYMENT RECEIPT</Text>
@@ -277,7 +294,7 @@ const SupplierPayment = () => {
               </TouchableOpacity>
               
               <TouchableOpacity 
-                style={styles.closeButton} 
+                style={[styles.button, styles.closeButton]} 
                 onPress={closeModal}
               >
                 <Text style={styles.closeButtonText}>Close</Text>
@@ -439,11 +456,12 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 8,
     alignItems: 'center',
+    justifyContent: 'center',
   },
   cancelButton: {
-    backgroundColor: '#f8f9fa',
-    borderWidth: 1,
-    borderColor: '#e9ecef',
+    backgroundColor: '#fff',
+    borderWidth: 2,
+    borderColor: '#e63946',
     marginRight: 8,
   },
   confirmButton: {
@@ -458,17 +476,23 @@ const styles = StyleSheet.create({
     marginTop: 24,
   },
   closeButton: {
-    backgroundColor: '#f8f9fa',
+    backgroundColor: '#fff',
     padding: 16,
     borderRadius: 8,
     alignItems: 'center',
     marginTop: 12,
-    borderWidth: 1,
-    borderColor: '#e9ecef',
+    borderWidth: 2,
+    borderColor: '#495057',
   },
   buttonText: {
     color: '#fff',
     fontWeight: '600',
+    fontSize: 16,
+  },
+  cancelButtonText: {
+    color: '#e63946',
+    fontWeight: '600',
+    fontSize: 16,
   },
   downloadButtonText: {
     color: '#fff',
@@ -476,8 +500,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   closeButtonText: {
-    color: '#212529',
+    color: '#495057',
     fontWeight: '600',
+    fontSize: 16,
   },
 });
 

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 30, 2025 at 11:49 PM
+-- Generation Time: Mar 31, 2025 at 07:54 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -306,7 +306,7 @@ INSERT INTO `store_items` (`id`, `category`, `item_name`, `quantity`, `descripti
 (2, 'Learning Materials', 'Workbooks & Exercise Books', 63, 'Practice workbooks for language learners', '2025-03-30 06:48:33', 800.00),
 (3, 'Learning Materials', 'Language Flashcards', 60, 'Flashcards for vocabulary learning', '2025-03-30 06:48:33', 1200.00),
 (4, 'Learning Materials', 'Digital Learning Resources (USBs with lessons)', 30, 'USBs with recorded lessons and digital content', '2025-03-30 06:48:33', 2500.00),
-(5, 'Audio-Visual Aids', 'Headphones & Earphones', 20, 'Used for listening to language recordings', '2025-03-30 06:48:33', 3000.00),
+(5, 'Audio-Visual Aids', 'Headphones & Earphones', 30, 'Used for listening to language recordings', '2025-03-30 06:48:33', 3000.00),
 (6, 'Audio-Visual Aids', 'Microphones', 15, 'For pronunciation practice and recording lessons', '2025-03-30 06:48:33', 4500.00),
 (7, 'Audio-Visual Aids', 'Speakers', 20, 'Used in classrooms for audio lessons', '2025-03-30 06:48:33', 7000.00),
 (8, 'Audio-Visual Aids', 'Projectors & Screens', 5, 'For displaying video lessons and presentations', '2025-03-30 06:48:33', 25000.00),
@@ -349,9 +349,7 @@ CREATE TABLE `store_requests` (
 --
 
 INSERT INTO `store_requests` (`id`, `storekeeper_id`, `item_id`, `supplier_id`, `quantity_requested`, `total_cost`, `status`, `requested_at`) VALUES
-(1, 1, 15, 1, 2, 16000.00, 'rejected', '2025-03-30 08:37:18'),
-(2, 1, 2, 1, 23, 18400.00, 'received', '2025-03-30 08:45:21'),
-(3, 1, 7, 2, 10, 70000.00, 'received', '2025-03-30 09:10:47');
+(4, 1, 5, 1, 10, 30000.00, 'received', '2025-03-31 16:43:01');
 
 -- --------------------------------------------------------
 
@@ -456,8 +454,7 @@ CREATE TABLE `supplier_payments` (
 --
 
 INSERT INTO `supplier_payments` (`id`, `supplier_id`, `total_cost`, `payment_method`, `payment_reference`, `payment_date`, `request_id`) VALUES
-(7, 2, 18400.00, 'mpesa', 'QWERT6Y765', '2025-03-30 19:48:51', 2),
-(9, 2, 70000.00, 'mpesa', 'QWERTY2357', '2025-03-30 20:13:00', 3);
+(14, 1, 30000.00, 'mpesa', 'QWERT43563', '2025-03-31 16:46:18', 4);
 
 -- --------------------------------------------------------
 
@@ -726,7 +723,7 @@ ALTER TABLE `store_items`
 -- AUTO_INCREMENT for table `store_requests`
 --
 ALTER TABLE `store_requests`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `students`
@@ -756,7 +753,7 @@ ALTER TABLE `suppliers`
 -- AUTO_INCREMENT for table `supplier_payments`
 --
 ALTER TABLE `supplier_payments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `tutors`

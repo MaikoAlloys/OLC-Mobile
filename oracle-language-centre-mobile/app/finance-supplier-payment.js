@@ -3,7 +3,6 @@ import {
   View, 
   Text, 
   StyleSheet, 
-  ScrollView, 
   TouchableOpacity, 
   TextInput, 
   Alert,
@@ -18,9 +17,14 @@ const FinanceSupplierPayments = () => {
     const [paymentReference, setPaymentReference] = useState('');
     const [selectedRequest, setSelectedRequest] = useState(null);
     const [modalVisible, setModalVisible] = useState(false);
+    const [paidRequests, setPaidRequests] = useState([]);
 
     // Fetch received requests
     useEffect(() => {
+        fetchRequests();
+    }, []);
+
+    const fetchRequests = () => {
         api.get('/storekeeper/received')
             .then((response) => {
                 setRequests(response.data);
@@ -29,11 +33,21 @@ const FinanceSupplierPayments = () => {
                 console.error("Error fetching received requests:", error);
                 Alert.alert("Error", "Failed to load requests");
             });
-    }, []);
+    };
 
     const handlePayment = () => {
         if (!selectedRequest) {
             Alert.alert("Error", "No request selected");
+            return;
+        }
+
+        if (!paymentMethod) {
+            Alert.alert("Error", "Please select a payment method");
+            return;
+        }
+
+        if (!paymentReference) {
+            Alert.alert("Error", "Please enter a payment reference");
             return;
         }
 
@@ -42,10 +56,10 @@ const FinanceSupplierPayments = () => {
             total_cost: selectedRequest.total_cost,
             payment_method: paymentMethod,
             payment_reference: paymentReference,
-            supplier_id: selectedRequest.supplier_id // Add this line
+            supplier_id: selectedRequest.supplier_id
         };
 
-        console.log("Sending payment data:", paymentData); // Debug log
+        console.log("Sending payment data:", paymentData);
 
         api.post('/storekeeper/pay', paymentData)
             .then((response) => {
@@ -53,9 +67,16 @@ const FinanceSupplierPayments = () => {
                 setModalVisible(false);
                 setPaymentMethod('');
                 setPaymentReference('');
+                // Mark this request as paid
+                setPaidRequests([...paidRequests, selectedRequest.request_id]);
+                fetchRequests();
             })
             .catch((error) => {
                 console.error("Payment error:", error.response?.data);
+                if (error.response?.data?.message?.includes("already been made")) {
+                    // Mark this request as paid if payment already exists
+                    setPaidRequests([...paidRequests, selectedRequest.request_id]);
+                }
                 Alert.alert("Error", error.response?.data?.message || "Payment failed");
             });
     };
@@ -71,13 +92,17 @@ const FinanceSupplierPayments = () => {
             </Text>
             <Text style={styles.cell}>{item.total_cost}</Text>
             <TouchableOpacity 
-                style={styles.payButton}
+                style={paidRequests.includes(item.request_id) ? styles.paidButton : styles.payButton}
                 onPress={() => {
-                    setSelectedRequest(item);
-                    setModalVisible(true);
+                    if (!paidRequests.includes(item.request_id)) {
+                        setSelectedRequest(item);
+                        setModalVisible(true);
+                    }
                 }}
             >
-                <Text style={styles.payButtonText}>Pay</Text>
+                <Text style={styles.payButtonText}>
+                    {paidRequests.includes(item.request_id) ? 'Paid' : 'Pay'}
+                </Text>
             </TouchableOpacity>
         </View>
     );
@@ -234,6 +259,13 @@ const styles = StyleSheet.create({
     },
     payButton: {
         backgroundColor: '#3498db',
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        borderRadius: 4,
+        alignItems: 'center',
+    },
+    paidButton: {
+        backgroundColor: '#2ecc71',
         paddingHorizontal: 12,
         paddingVertical: 6,
         borderRadius: 4,

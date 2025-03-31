@@ -25,8 +25,8 @@ const StoreKeeperReceiveStock = () => {
             // Set the requests state to an array (even if it was a single object)
             setRequests(data);
         } catch (error) {
-            console.error("Error fetching requests:", error.response || error);
-            Alert.alert("Error", "Failed to load requests. Please check the API endpoint.");
+            // console.error("Error fetching requests:", error.response || error);
+            Alert.alert("Error", "No request found.");
         }
         setLoading(false);
     };
