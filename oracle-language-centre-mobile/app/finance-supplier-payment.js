@@ -72,7 +72,7 @@ const FinanceSupplierPayments = () => {
                 fetchRequests();
             })
             .catch((error) => {
-                console.error("Payment error:", error.response?.data);
+                // console.error("Payment error:", error.response?.data);
                 if (error.response?.data?.message?.includes("already been made")) {
                     // Mark this request as paid if payment already exists
                     setPaidRequests([...paidRequests, selectedRequest.request_id]);
