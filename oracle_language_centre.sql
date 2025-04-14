@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 31, 2025 at 07:54 PM
+-- Generation Time: Apr 14, 2025 at 08:19 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -73,6 +73,45 @@ INSERT INTO `courses` (`id`, `name`, `duration`, `fee`, `description`) VALUES
 (12, 'French Classes', '5 months', 7500, 'We guide you all the way from beginner to fluent. Teaching people from all walks of life and all nationalities.'),
 (13, 'Spanish Classes', '5 months', 7500, 'Want to study Spanish? Start private Spanish lessons, group Spanish lessons or online Spanish lessons.'),
 (14, 'Chinese Classes', '6 months', 8500, 'Learn and study with us. We provide beginner to advanced level Chinese language lessons.');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `feedback`
+--
+
+CREATE TABLE `feedback` (
+  `feedback_id` int(11) NOT NULL,
+  `student_id` int(11) NOT NULL,
+  `tutor_id` int(11) DEFAULT NULL,
+  `librarian_id` int(11) DEFAULT NULL,
+  `finance_manager_id` int(11) DEFAULT NULL,
+  `hod_id` int(11) DEFAULT NULL,
+  `message` text DEFAULT NULL,
+  `rating` int(11) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `status` enum('pending','resolved') DEFAULT 'pending',
+  `reply` text DEFAULT NULL,
+  `reply_by` varchar(255) DEFAULT NULL,
+  `reply_time` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `feedback`
+--
+
+INSERT INTO `feedback` (`feedback_id`, `student_id`, `tutor_id`, `librarian_id`, `finance_manager_id`, `hod_id`, `message`, `rating`, `created_at`, `status`, `reply`, `reply_by`, `reply_time`) VALUES
+(1, 2, 2, NULL, NULL, NULL, 'Great support and assistance.', 5, '2025-04-14 10:23:09', 'pending', NULL, NULL, NULL),
+(2, 3, 1, NULL, NULL, NULL, 'Hey Mary', NULL, '2025-04-14 15:45:44', 'pending', NULL, NULL, NULL),
+(3, 3, 1, NULL, NULL, NULL, 'Hey Kerren', NULL, '2025-04-14 15:46:49', 'pending', NULL, NULL, NULL),
+(4, 3, 1, NULL, NULL, NULL, 'Hey Dennis', 2, '2025-04-14 15:48:10', 'pending', NULL, NULL, NULL),
+(5, 3, 3, NULL, NULL, NULL, 'Hey Den', 1, '2025-04-14 16:21:24', 'pending', NULL, NULL, NULL),
+(6, 2, 1, NULL, NULL, NULL, 'Hey Kerren Maiko it is finance Alex.', 5, '2025-04-14 16:52:12', 'pending', NULL, NULL, NULL),
+(7, 2, 1, NULL, NULL, NULL, 'Hey Kariyki ', 1, '2025-04-14 17:00:22', 'pending', NULL, NULL, NULL),
+(8, 2, NULL, NULL, NULL, 1, 'Hey keeeeerrr', 1, '2025-04-14 17:12:45', 'pending', NULL, NULL, NULL),
+(9, 2, NULL, NULL, 1, NULL, 'Hey Pettttt', 1, '2025-04-14 17:13:33', 'pending', NULL, NULL, NULL),
+(10, 2, NULL, 1, NULL, NULL, 'Hey librarian ', 4, '2025-04-14 17:26:14', 'resolved', 'WELCOME', NULL, NULL),
+(11, 2, NULL, NULL, 1, NULL, 'Th', 2, '2025-04-14 17:35:44', 'pending', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -528,6 +567,17 @@ ALTER TABLE `courses`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `feedback`
+--
+ALTER TABLE `feedback`
+  ADD PRIMARY KEY (`feedback_id`),
+  ADD KEY `student_id` (`student_id`),
+  ADD KEY `tutor_id` (`tutor_id`),
+  ADD KEY `librarian_id` (`librarian_id`),
+  ADD KEY `finance_manager_id` (`finance_manager_id`),
+  ADD KEY `hod_id` (`hod_id`);
+
+--
 -- Indexes for table `finance_managers`
 --
 ALTER TABLE `finance_managers`
@@ -672,6 +722,12 @@ ALTER TABLE `courses`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
+-- AUTO_INCREMENT for table `feedback`
+--
+ALTER TABLE `feedback`
+  MODIFY `feedback_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+
+--
 -- AUTO_INCREMENT for table `finance_managers`
 --
 ALTER TABLE `finance_managers`
@@ -770,6 +826,16 @@ ALTER TABLE `users`
 --
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `feedback`
+--
+ALTER TABLE `feedback`
+  ADD CONSTRAINT `feedback_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `users` (`id`),
+  ADD CONSTRAINT `feedback_ibfk_2` FOREIGN KEY (`tutor_id`) REFERENCES `tutors` (`id`),
+  ADD CONSTRAINT `feedback_ibfk_3` FOREIGN KEY (`librarian_id`) REFERENCES `librarians` (`id`),
+  ADD CONSTRAINT `feedback_ibfk_4` FOREIGN KEY (`finance_manager_id`) REFERENCES `finance_managers` (`id`),
+  ADD CONSTRAINT `feedback_ibfk_5` FOREIGN KEY (`hod_id`) REFERENCES `hods` (`id`);
 
 --
 -- Constraints for table `learning_resources`

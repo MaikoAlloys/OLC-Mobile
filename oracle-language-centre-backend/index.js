@@ -11,12 +11,13 @@ const coursesRoutes = require("./routes/courses");
 const paymentsRoutes = require("./routes/payments");
 const studentRoutes = require("./routes/students");
 const applicationRoutes = require("./routes/applications");
-const financeRoutes = require("./routes/finance"); // ✅ Added Finance Routes
-const hodRoutes = require("./routes/hod"); // ✅ Added HOD Routes
-const tutorRoutes = require("./routes/tutors"); // ✅ Added Tutor Routes
-const librarianRouter = require("./routes/librarian"); // Import the librarianRouter
-const storekeeperRouter = require("./routes/storekeeper");//Import the Storekeeper Routes
-const supplierRouter = require("./routes/supplier");//Import the Supplier Routes
+const financeRoutes = require("./routes/finance"); 
+const hodRoutes = require("./routes/hod"); 
+const tutorRoutes = require("./routes/tutors"); 
+const librarianRouter = require("./routes/librarian"); 
+const storekeeperRouter = require("./routes/storekeeper");
+const supplierRouter = require("./routes/supplier");
+const feedbackRouter = require("./routes/feedback");
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -33,12 +34,13 @@ const routes = [
   { path: "/payments", route: paymentsRoutes },
   { path: "/students", route: studentRoutes },
   { path: "/applications", route: applicationRoutes },
-  { path: "/finance", route: financeRoutes }, // ✅ Registered Finance Route
-  { path: "/hod", route: hodRoutes }, // ✅ Registered HOD Route
-  { path: "/tutors", route: tutorRoutes }, // ✅ Registered Tutor Route
-  { path: "/librarian", route: librarianRouter }, // ✅ Registered Librarian Route
-  { path: "/storekeeper", route: storekeeperRouter }, //Registere Storekeeper Routes
-  { path: "/supplier", route: supplierRouter }, //Register Supplier Routes
+  { path: "/finance", route: financeRoutes }, 
+  { path: "/hod", route: hodRoutes }, 
+  { path: "/tutors", route: tutorRoutes }, 
+  { path: "/librarian", route: librarianRouter }, 
+  { path: "/storekeeper", route: storekeeperRouter }, 
+  { path: "/supplier", route: supplierRouter }, 
+  { path: "/feedback", route: feedbackRouter }, 
 ];
 
 routes.forEach(({ path, route }) => {

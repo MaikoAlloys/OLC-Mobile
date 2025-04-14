@@ -63,24 +63,32 @@ const handleLogin = async () => {
 
 <style scoped>
 .login-page {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-  padding: 20px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
 }
 
 .login-card {
-  width: 100%;
-  max-width: 420px;
+  width: 420px;
   padding: 2.5rem;
   background: white;
   border-radius: 12px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   text-align: center;
   animation: fadeIn 0.5s ease;
+  margin: 0;
+  position: relative;
+  z-index: 10;
 }
 
 .brand-header {
@@ -187,7 +195,9 @@ const handleLogin = async () => {
 
 @media (max-width: 480px) {
   .login-card {
+    width: calc(100% - 40px);
     padding: 2rem 1.5rem;
+    margin: 0 20px;
   }
   
   .brand-header h1 {

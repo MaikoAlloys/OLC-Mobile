@@ -87,6 +87,9 @@ export default function StudentDashboard() {
           <TouchableOpacity style={styles.navButton} onPress={() => { router.push("/certificates"); toggleSidebar(); }}>
             <Text style={styles.navItem}>Certificates</Text>
           </TouchableOpacity>
+          <TouchableOpacity style={styles.navButton} onPress={() => { router.push("/student-feedback"); toggleSidebar(); }}>
+            <Text style={styles.navItem}>Feedback</Text>
+          </TouchableOpacity>
           <TouchableOpacity style={styles.navButton} onPress={() => { router.push("/about"); toggleSidebar(); }}>
             <Text style={styles.navItem}>About Us</Text>
           </TouchableOpacity>
