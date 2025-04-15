@@ -4,6 +4,7 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import api from "./api";
+import { Ionicons } from "@expo/vector-icons"; // Import icons
 
 export default function HODAssignedStudents() {
   const router = useRouter();
@@ -52,11 +53,16 @@ export default function HODAssignedStudents() {
             <TouchableOpacity 
               style={styles.card} 
               onPress={() => router.push(`/hod-assigned-student-details?id=${item.assignment_id}`)}
+              activeOpacity={0.7} // Adds nice press effect
             >
-              <Text style={styles.studentName}>{item.first_name} {item.last_name}</Text>
-              <Text> {item.course_name}</Text>
-              <Text> Tutor: {item.tutor_firstname} {item.tutor_lastname}</Text>
-              <Text> Assigned: {new Date(item.assigned_at).toLocaleString()}</Text>
+              <View style={styles.cardHeader}>
+                <Text style={styles.studentName}>{item.first_name} {item.last_name}</Text>
+                <Ionicons name="chevron-forward" size={20} color="#666" />
+              </View>
+              <Text style={styles.courseText}>{item.course_name}</Text>
+              <Text style={styles.detailText}>Tutor: {item.tutor_firstname} {item.tutor_lastname}</Text>
+              <Text style={styles.detailText}>Assigned: {new Date(item.assigned_at).toLocaleString()}</Text>
+              <Text style={styles.viewDetailsText}>View details</Text>
             </TouchableOpacity>
           )}
         />
@@ -67,15 +73,51 @@ export default function HODAssignedStudents() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 20, backgroundColor: "#f5f5f5" },
-  title: { fontSize: 24, textAlign: "center", marginBottom: 10 },
+  title: { 
+    fontSize: 24, 
+    fontWeight: '600',
+    textAlign: "center", 
+    marginBottom: 20,
+    color: '#333'
+  },
   loading: { textAlign: "center", marginTop: 20 },
-  noRecords: { textAlign: "center", fontSize: 16, color: "red", marginTop: 20 },
+  noRecords: { textAlign: "center", fontSize: 16, color: "#666", marginTop: 20 },
   card: {
     backgroundColor: "#fff",
-    padding: 15,
-    marginBottom: 10,
-    borderRadius: 5,
+    padding: 16,
+    marginBottom: 12,
+    borderRadius: 8,
     elevation: 2,
+    borderLeftWidth: 4,
+    borderLeftColor: '#3498db', // Adds a colored accent to the card
   },
-  studentName: { fontSize: 18, fontWeight: "bold" },
+  cardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  studentName: { 
+    fontSize: 18, 
+    fontWeight: "bold",
+    color: '#2c3e50'
+  },
+  courseText: {
+    fontSize: 16,
+    color: '#3498db',
+    marginBottom: 4,
+    fontWeight: '500'
+  },
+  detailText: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 4
+  },
+  viewDetailsText: {
+    marginTop: 8,
+    fontSize: 14,
+    color: '#3498db',
+    textAlign: 'right',
+    fontStyle: 'italic'
+  }
 });

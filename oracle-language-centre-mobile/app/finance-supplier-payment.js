@@ -17,7 +17,6 @@ const FinanceSupplierPayments = () => {
     const [paymentReference, setPaymentReference] = useState('');
     const [selectedRequest, setSelectedRequest] = useState(null);
     const [modalVisible, setModalVisible] = useState(false);
-    const [paidRequests, setPaidRequests] = useState([]);
 
     // Fetch received requests
     useEffect(() => {
@@ -59,53 +58,50 @@ const FinanceSupplierPayments = () => {
             supplier_id: selectedRequest.supplier_id
         };
 
-        console.log("Sending payment data:", paymentData);
-
         api.post('/storekeeper/pay', paymentData)
             .then((response) => {
                 Alert.alert("Success", response.data.message);
                 setModalVisible(false);
                 setPaymentMethod('');
                 setPaymentReference('');
-                // Mark this request as paid
-                setPaidRequests([...paidRequests, selectedRequest.request_id]);
-                fetchRequests();
+                fetchRequests(); // Refresh the list to get updated payment status
             })
             .catch((error) => {
-                // console.error("Payment error:", error.response?.data);
-                if (error.response?.data?.message?.includes("already been made")) {
-                    // Mark this request as paid if payment already exists
-                    setPaidRequests([...paidRequests, selectedRequest.request_id]);
-                }
                 Alert.alert("Error", error.response?.data?.message || "Payment failed");
             });
     };
 
-    const renderItem = ({ item }) => (
-        <View style={styles.tableRow}>
-            <Text style={[styles.cell, styles.supplierCell]}>
-                {item.first_name} {item.last_name}
-            </Text>
-            <Text style={styles.cell}>{item.quantity_requested}</Text>
-            <Text style={styles.cell}>
-                {new Date(item.requested_at).toLocaleDateString()}
-            </Text>
-            <Text style={styles.cell}>{item.total_cost}</Text>
-            <TouchableOpacity 
-                style={paidRequests.includes(item.request_id) ? styles.paidButton : styles.payButton}
-                onPress={() => {
-                    if (!paidRequests.includes(item.request_id)) {
-                        setSelectedRequest(item);
-                        setModalVisible(true);
-                    }
-                }}
-            >
-                <Text style={styles.payButtonText}>
-                    {paidRequests.includes(item.request_id) ? 'Paid' : 'Pay'}
+    const renderItem = ({ item }) => {
+        // Determine button state based on payment_status
+        const isPaid = item.payment_status === 'paid' || item.payment_status === 'confirmed';
+        
+        return (
+            <View style={styles.tableRow}>
+                <Text style={[styles.cell, styles.supplierCell]}>
+                    {item.first_name} {item.last_name}
                 </Text>
-            </TouchableOpacity>
-        </View>
-    );
+                <Text style={styles.cell}>{item.quantity_requested}</Text>
+                <Text style={styles.cell}>
+                    {new Date(item.requested_at).toLocaleDateString()}
+                </Text>
+                <Text style={styles.cell}>{item.total_cost}</Text>
+                <TouchableOpacity 
+                    style={isPaid ? styles.paidButton : styles.payButton}
+                    onPress={() => {
+                        if (!isPaid) {
+                            setSelectedRequest(item);
+                            setModalVisible(true);
+                        }
+                    }}
+                    disabled={isPaid}
+                >
+                    <Text style={styles.payButtonText}>
+                        {isPaid ? 'Paid' : 'Pay'}
+                    </Text>
+                </TouchableOpacity>
+            </View>
+        );
+    };
 
     return (
         <View style={styles.container}>

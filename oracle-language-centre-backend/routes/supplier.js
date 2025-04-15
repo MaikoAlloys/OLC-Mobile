@@ -119,4 +119,32 @@ router.get("/payments/:supplier_id", async (req, res) => {
     }
 });
 
+//supplier to confirm payment
+router.put("/payments/confirm/:payment_id", (req, res) => {
+    const { payment_id } = req.params;
+
+    if (!payment_id) {
+        return res.status(400).json({ message: "Payment ID is required" });
+    }
+
+    const updateQuery = `
+        UPDATE supplier_payments 
+        SET status = 'confirmed' 
+        WHERE id = ? AND status = 'paid';
+    `;
+
+    db.query(updateQuery, [payment_id], (err, result) => {
+        if (err) {
+            console.error("Error updating payment status:", err);
+            return res.status(500).json({ message: "Database error", error: err });
+        }
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: "Payment not found or already confirmed." });
+        }
+
+        res.status(200).json({ message: "Payment confirmed successfully." });
+    });
+});
+
 module.exports = router;

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 15, 2025 at 01:08 PM
+-- Generation Time: Apr 15, 2025 at 03:48 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -354,7 +354,7 @@ INSERT INTO `store_items` (`id`, `category`, `item_name`, `quantity`, `descripti
 (7, 'Audio-Visual Aids', 'Speakers', 20, 'Used in classrooms for audio lessons', '2025-03-30 06:48:33', 7000.00),
 (8, 'Audio-Visual Aids', 'Projectors & Screens', 5, 'For displaying video lessons and presentations', '2025-03-30 06:48:33', 25000.00),
 (9, 'IT & Digital Equipment', 'Computers & Laptops', 10, 'Used by students and instructors for research', '2025-03-30 06:48:33', 60000.00),
-(10, 'IT & Digital Equipment', 'Tablets', 8, 'For interactive language learning', '2025-03-30 06:48:33', 35000.00),
+(10, 'IT & Digital Equipment', 'Tablets', 13, 'For interactive language learning', '2025-03-30 06:48:33', 35000.00),
 (11, 'IT & Digital Equipment', 'Printers & Scanners', 3, 'For printing and scanning documents', '2025-03-30 06:48:33', 15000.00),
 (12, 'IT & Digital Equipment', 'External Hard Drives & USBs', 15, 'For storing learning materials', '2025-03-30 06:48:33', 5000.00),
 (13, 'Classroom Supplies', 'Whiteboards & Markers', 12, 'For writing lessons and explanations', '2025-03-30 06:48:33', 4000.00),
@@ -392,7 +392,8 @@ CREATE TABLE `store_requests` (
 --
 
 INSERT INTO `store_requests` (`id`, `storekeeper_id`, `item_id`, `supplier_id`, `quantity_requested`, `total_cost`, `status`, `requested_at`) VALUES
-(4, 1, 5, 1, 10, 30000.00, 'received', '2025-03-31 16:43:01');
+(4, 1, 5, 1, 10, 30000.00, 'received', '2025-03-31 16:43:01'),
+(5, 1, 10, 1, 5, 175000.00, 'received', '2025-04-15 12:28:06');
 
 -- --------------------------------------------------------
 
@@ -489,15 +490,17 @@ CREATE TABLE `supplier_payments` (
   `payment_method` enum('mpesa','bank') NOT NULL,
   `payment_reference` varchar(20) NOT NULL,
   `payment_date` timestamp NOT NULL DEFAULT current_timestamp(),
-  `request_id` int(11) NOT NULL
+  `request_id` int(11) NOT NULL,
+  `status` enum('paid','confirmed') NOT NULL DEFAULT 'paid'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `supplier_payments`
 --
 
-INSERT INTO `supplier_payments` (`id`, `supplier_id`, `total_cost`, `payment_method`, `payment_reference`, `payment_date`, `request_id`) VALUES
-(14, 1, 30000.00, 'mpesa', 'QWERT43563', '2025-03-31 16:46:18', 4);
+INSERT INTO `supplier_payments` (`id`, `supplier_id`, `total_cost`, `payment_method`, `payment_reference`, `payment_date`, `request_id`, `status`) VALUES
+(14, 1, 30000.00, 'mpesa', 'QWERT43563', '2025-03-31 16:46:18', 4, 'confirmed'),
+(15, 1, 175000.00, 'bank', 'QW32ER432WQ23E', '2025-04-15 13:33:38', 5, 'confirmed');
 
 -- --------------------------------------------------------
 
@@ -783,7 +786,7 @@ ALTER TABLE `store_items`
 -- AUTO_INCREMENT for table `store_requests`
 --
 ALTER TABLE `store_requests`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `students`
@@ -813,7 +816,7 @@ ALTER TABLE `suppliers`
 -- AUTO_INCREMENT for table `supplier_payments`
 --
 ALTER TABLE `supplier_payments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `tutors`

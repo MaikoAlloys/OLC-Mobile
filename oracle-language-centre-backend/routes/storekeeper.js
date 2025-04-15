@@ -286,12 +286,14 @@ router.put("/requests/:id/receive", (req, res) => {
 router.get("/received", (req, res) => {
     const query = `
         SELECT sr.id AS request_id, sr.item_id, sr.quantity_requested, sr.total_cost, sr.requested_at, 
-               s.first_name, s.last_name, sr.supplier_id
+               s.first_name, s.last_name, sr.supplier_id,
+               sp.status AS payment_status, sp.payment_method, sp.payment_reference
         FROM store_requests sr
         JOIN suppliers s ON sr.supplier_id = s.id
+        LEFT JOIN supplier_payments sp ON sr.id = sp.request_id
         WHERE sr.status = 'received';
     `;
-    
+
     db.query(query, (err, rows) => {
         if (err) {
             console.error("Error fetching received requests:", err);
@@ -299,16 +301,12 @@ router.get("/received", (req, res) => {
         }
 
         if (!rows || rows.length === 0) {
-            console.error("No received requests found.");
             return res.status(404).json({ message: "No received requests found." });
         }
-        
-        console.log("Received requests:", rows); // Debug: log the rows
-        
+
         res.status(200).json(rows);
     });
 });
-
 
 
 // Create a payment record for a supplier

@@ -11,11 +11,11 @@ import {
   Alert,
   Platform,
 } from "react-native";
+import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { captureRef } from 'react-native-view-shot';
 import * as MediaLibrary from 'expo-media-library';
 
-// Simple JWT decoder (no library needed)
 const decodeJWT = (token) => {
   try {
     const base64Url = token.split('.')[1];
@@ -39,6 +39,7 @@ const SupplierPayment = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isReceiptVisible, setIsReceiptVisible] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [confirming, setConfirming] = useState(false);
   const [error, setError] = useState(null);
   const [supplierId, setSupplierId] = useState(null);
   const receiptRef = useRef(null);
@@ -97,9 +98,38 @@ const SupplierPayment = () => {
     setIsModalVisible(true);
   };
 
-  const confirmPayment = () => {
-    setIsModalVisible(false);
-    setIsReceiptVisible(true);
+  const confirmPayment = async () => {
+    if (!selectedPayment) return;
+    
+    setConfirming(true);
+    try {
+      const token = await AsyncStorage.getItem("token");
+      if (!token) {
+        Alert.alert("Unauthorized", "You must log in again.");
+        return;
+      }
+
+      const response = await api.put(
+        `/supplier/payments/confirm/${selectedPayment.id}`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      if (response.data.message === "Payment confirmed successfully.") {
+        // Update local state to reflect the change
+        setPayments(payments.map(p => 
+          p.id === selectedPayment.id ? { ...p, status: 'confirmed' } : p
+        ));
+        setIsModalVisible(false);
+        setIsReceiptVisible(true);
+      } else {
+        Alert.alert("Error", response.data.message || "Failed to confirm payment");
+      }
+    } catch (error) {
+      Alert.alert("Error", error.response?.data?.message || "Failed to confirm payment");
+    } finally {
+      setConfirming(false);
+    }
   };
 
   const closeModal = () => {
@@ -110,7 +140,6 @@ const SupplierPayment = () => {
 
   const downloadReceipt = async () => {
     try {
-      // Request permissions
       if (Platform.OS === 'android') {
         const { status } = await MediaLibrary.requestPermissionsAsync();
         if (status !== 'granted') {
@@ -119,18 +148,15 @@ const SupplierPayment = () => {
         }
       }
 
-      // Wait for the receiptRef to be available
       if (!receiptRef.current) {
         throw new Error("Receipt reference not available");
       }
 
-      // Capture only the receipt section
       const uri = await captureRef(receiptRef, {
         format: 'png',
         quality: 1,
       });
 
-      // Save to gallery
       const asset = await MediaLibrary.createAssetAsync(uri);
       await MediaLibrary.createAlbumAsync('Receipts', asset, false);
       
@@ -145,12 +171,29 @@ const SupplierPayment = () => {
     <TouchableOpacity 
       style={styles.paymentItem}
       onPress={() => showPaymentDetails(item)}
+      activeOpacity={0.7}
     >
-      <Text style={styles.paymentText}>Payment ID: {item.id}</Text>
-      <Text style={styles.paymentAmount}>Amount: Ksh {item.total_cost}</Text>
-      <Text style={styles.paymentDate}>
-        Date: {new Date(item.payment_date).toLocaleDateString()}
-      </Text>
+      <View style={styles.paymentContent}>
+        <View>
+          <Text style={styles.paymentText}>Payment ID: {item.id}</Text>
+          <Text style={styles.paymentAmount}>Amount: Ksh {item.total_cost}</Text>
+          <Text style={styles.paymentDate}>
+            Date: {new Date(item.payment_date).toLocaleDateString()}
+          </Text>
+          {item.status && (
+            <View style={[
+              styles.statusBadge,
+              item.status === 'confirmed' ? styles.confirmedBadge : styles.paidBadge
+            ]}>
+              <Text style={styles.statusText}>{item.status.toUpperCase()}</Text>
+            </View>
+          )}
+        </View>
+        <View style={styles.clickIndicator}>
+          <Ionicons name="chevron-forward" size={20} color="#7f8c8d" />
+          <Text style={styles.viewDetailsText}>View details</Text>
+        </View>
+      </View>
     </TouchableOpacity>
   );
 
@@ -206,7 +249,7 @@ const SupplierPayment = () => {
         <View style={styles.modalContainer}>
           {selectedPayment && (
             <>
-              <Text style={styles.modalTitle}>Confirm Payment</Text>
+              <Text style={styles.modalTitle}>Payment Details</Text>
               
               <View style={styles.detailRow}>
                 <Text style={styles.detailLabel}>Payment ID:</Text>
@@ -217,27 +260,44 @@ const SupplierPayment = () => {
                 <Text style={styles.detailLabel}>Amount:</Text>
                 <Text style={styles.detailValue}>Ksh {selectedPayment.total_cost}</Text>
               </View>
+
+              <View style={styles.detailRow}>
+                <Text style={styles.detailLabel}>Status:</Text>
+                <Text style={[
+                  styles.detailValue,
+                  selectedPayment.status === 'confirmed' ? styles.confirmedText : styles.paidText
+                ]}>
+                  {selectedPayment.status || 'pending'}
+                </Text>
+              </View>
               
               <View style={styles.buttonRow}>
                 <TouchableOpacity 
                   style={[styles.button, styles.cancelButton]}
                   onPress={closeModal}
                 >
-                  <Text style={styles.cancelButtonText}>Cancel</Text>
+                  <Text style={styles.cancelButtonText}>Close</Text>
                 </TouchableOpacity>
-                <TouchableOpacity 
-                  style={[styles.button, styles.confirmButton]}
-                  onPress={confirmPayment}
-                >
-                  <Text style={styles.buttonText}>Confirm</Text>
-                </TouchableOpacity>
+                {selectedPayment.status !== 'confirmed' && (
+                  <TouchableOpacity 
+                    style={[styles.button, styles.confirmButton]}
+                    onPress={confirmPayment}
+                    disabled={confirming}
+                  >
+                    {confirming ? (
+                      <ActivityIndicator color="#fff" />
+                    ) : (
+                      <Text style={styles.buttonText}>Confirm Payment</Text>
+                    )}
+                  </TouchableOpacity>
+                )}
               </View>
             </>
           )}
         </View>
       </Modal>
 
-      {/* Receipt Modal - This is the section we'll capture */}
+      {/* Receipt Modal */}
       <Modal visible={isReceiptVisible} animationType="slide">
         <View style={styles.receiptContainer} ref={receiptRef} collapsable={false}>
           {selectedPayment && (
@@ -284,13 +344,18 @@ const SupplierPayment = () => {
               
               <View style={styles.receiptDivider} />
               
+              <Text style={styles.receiptStatus}>
+                Status: <Text style={styles.confirmedText}>CONFIRMED</Text>
+              </Text>
+              
               <Text style={styles.receiptFooter}>Thank you for your supply!</Text>
               
               <TouchableOpacity 
                 style={styles.downloadButton} 
                 onPress={downloadReceipt}
               >
-                <Text style={styles.downloadButtonText}>Download Receipt</Text>
+                <Ionicons name="download-outline" size={20} color="#fff" />
+                <Text style={styles.downloadButtonText}> Save Receipt</Text>
               </TouchableOpacity>
               
               <TouchableOpacity 
@@ -335,6 +400,11 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     elevation: 2,
   },
+  paymentContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
   paymentText: {
     fontSize: 16,
     fontWeight: '600',
@@ -344,11 +414,38 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#2b8a3e',
     marginTop: 4,
+    fontWeight: '500',
   },
   paymentDate: {
     fontSize: 14,
     color: '#495057',
     marginTop: 4,
+  },
+  statusBadge: {
+    alignSelf: 'flex-start',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 4,
+    marginTop: 8,
+  },
+  paidBadge: {
+    backgroundColor: '#e3f2fd',
+  },
+  confirmedBadge: {
+    backgroundColor: '#e6f7ee',
+  },
+  statusText: {
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  clickIndicator: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  viewDetailsText: {
+    color: '#7f8c8d',
+    fontSize: 14,
+    marginLeft: 4,
   },
   emptyText: {
     fontSize: 16,
@@ -367,6 +464,8 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     width: 120,
     alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
   },
   modalContainer: {
     flex: 1,
@@ -416,6 +515,7 @@ const styles = StyleSheet.create({
   detailLabel: {
     fontWeight: '600',
     color: '#495057',
+    fontSize: 16,
   },
   receiptDetailLabel: {
     fontWeight: '600',
@@ -424,6 +524,15 @@ const styles = StyleSheet.create({
   },
   detailValue: {
     color: '#212529',
+    fontSize: 16,
+  },
+  confirmedText: {
+    color: '#2e7d32',
+    fontWeight: 'bold',
+  },
+  paidText: {
+    color: '#1565c0',
+    fontWeight: 'bold',
   },
   receiptDetailValue: {
     color: '#212529',
@@ -438,6 +547,13 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#dee2e6',
     marginVertical: 16,
+  },
+  receiptStatus: {
+    fontSize: 16,
+    color: '#495057',
+    textAlign: 'center',
+    marginBottom: 16,
+    fontWeight: '500',
   },
   receiptFooter: {
     fontSize: 16,
@@ -461,7 +577,7 @@ const styles = StyleSheet.create({
   cancelButton: {
     backgroundColor: '#fff',
     borderWidth: 2,
-    borderColor: '#e63946',
+    borderColor: '#495057',
     marginRight: 8,
   },
   confirmButton: {
@@ -474,6 +590,8 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: 'center',
     marginTop: 24,
+    flexDirection: 'row',
+    justifyContent: 'center',
   },
   closeButton: {
     backgroundColor: '#fff',
@@ -490,7 +608,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   cancelButtonText: {
-    color: '#e63946',
+    color: '#495057',
     fontWeight: '600',
     fontSize: 16,
   },
@@ -498,6 +616,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: '600',
     fontSize: 16,
+    marginLeft: 8,
   },
   closeButtonText: {
     color: '#495057',
