@@ -47,7 +47,7 @@ export default function FinanceDashboard() {
   };
 
   const handleLogout = () => {
-    router.push("/finance-login");
+    router.push("/");
   };
 
   return (
@@ -74,8 +74,8 @@ export default function FinanceDashboard() {
           <TouchableOpacity onPress={() => router.push("/finance-supplier-payment")}>
             <Text style={styles.navItem}>Supplier payment</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => router.push("/cleared-students")}>
-            <Text style={styles.navItem}>Cleared Students</Text>
+          <TouchableOpacity onPress={() => router.push("/finance-feedback")}>
+            <Text style={styles.navItem}>Feedbacks</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={handleLogout}>
             <Text style={[styles.navItem, styles.logout]}>Logout</Text>

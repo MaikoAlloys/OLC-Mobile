@@ -37,7 +37,7 @@ export default function StudentDashboard() {
   const handleLogout = async () => {
     try {
       await AsyncStorage.removeItem("studentToken");
-      router.push("/student-login");
+      router.push("/");
     } catch (error) {
       console.error("Error logging out:", error);
     }

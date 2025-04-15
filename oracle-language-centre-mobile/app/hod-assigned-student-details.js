@@ -53,16 +53,16 @@ export default function HODAssignedStudentDetails() {
         <ActivityIndicator size="large" color="green" />
       ) : student ? (
         <View style={styles.card}>
-          <Text style={styles.label}>👤 Student Name:</Text>
+          <Text style={styles.label}>Student Name:</Text>
           <Text style={styles.value}>{student.first_name} {student.last_name}</Text>
 
-          <Text style={styles.label}>📜 Course:</Text>
+          <Text style={styles.label}>Course:</Text>
           <Text style={styles.value}>{student.course_name}</Text>
 
-          <Text style={styles.label}>👨‍🏫 Assigned Tutor:</Text>
+          <Text style={styles.label}>Assigned Tutor:</Text>
           <Text style={styles.value}>{student.tutor_firstname} {student.tutor_lastname}</Text>
 
-          <Text style={styles.label}>📅 Assigned On:</Text>
+          <Text style={styles.label}>Assigned On:</Text>
           <Text style={styles.value}>{new Date(student.assigned_at).toLocaleString()}</Text>
         </View>
       ) : (

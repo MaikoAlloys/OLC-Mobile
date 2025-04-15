@@ -59,7 +59,7 @@ export default function SupplierDashboard() {
 
     const handleLogout = async () => {
         await AsyncStorage.removeItem("token");
-        router.push("/supplier-login");
+        router.push("/");
     };
 
     return (

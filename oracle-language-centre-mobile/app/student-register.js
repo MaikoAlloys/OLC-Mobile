@@ -33,30 +33,138 @@ export default function StudentRegister() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Student Registration</Text>
-      <TextInput placeholder="Username" style={styles.input} onChangeText={(value) => setForm({ ...form, username: value })} />
-      <TextInput placeholder="First Name" style={styles.input} onChangeText={(value) => setForm({ ...form, first_name: value })} />
-      <TextInput placeholder="Last Name" style={styles.input} onChangeText={(value) => setForm({ ...form, last_name: value })} />
-      <TextInput placeholder="Email" style={styles.input} keyboardType="email-address" onChangeText={(value) => setForm({ ...form, email: value })} />
-      <TextInput placeholder="Phone (10 digits)" style={styles.input} keyboardType="numeric" maxLength={10} onChangeText={(value) => setForm({ ...form, phone: value })} />
-      <TextInput placeholder="Password" style={styles.input} secureTextEntry onChangeText={(value) => setForm({ ...form, password: value })} />
-      
-      <TouchableOpacity style={styles.button} onPress={handleRegister}>
-        <Text style={styles.buttonText}>Register</Text>
-      </TouchableOpacity>
+      <View style={styles.card}>
+        <Text style={styles.title}>Student Registration</Text>
+        <Text style={styles.subtitle}>Create your account</Text>
+        
+        <TextInput 
+          placeholder="Username"
+          placeholderTextColor="#95a5a6"
+          style={styles.input}
+          onChangeText={(value) => setForm({ ...form, username: value })}
+        />
+        <TextInput 
+          placeholder="First Name"
+          placeholderTextColor="#95a5a6"
+          style={styles.input}
+          onChangeText={(value) => setForm({ ...form, first_name: value })}
+        />
+        <TextInput 
+          placeholder="Last Name"
+          placeholderTextColor="#95a5a6"
+          style={styles.input}
+          onChangeText={(value) => setForm({ ...form, last_name: value })}
+        />
+        <TextInput 
+          placeholder="Email"
+          placeholderTextColor="#95a5a6"
+          style={styles.input}
+          keyboardType="email-address"
+          onChangeText={(value) => setForm({ ...form, email: value })}
+        />
+        <TextInput 
+          placeholder="Phone (10 digits)"
+          placeholderTextColor="#95a5a6"
+          style={styles.input}
+          keyboardType="numeric"
+          maxLength={10}
+          onChangeText={(value) => setForm({ ...form, phone: value })}
+        />
+        <TextInput 
+          placeholder="Password"
+          placeholderTextColor="#95a5a6"
+          style={styles.input}
+          secureTextEntry
+          onChangeText={(value) => setForm({ ...form, password: value })}
+        />
+        
+        <TouchableOpacity style={styles.button} onPress={handleRegister}>
+          <Text style={styles.buttonText}>Register</Text>
+        </TouchableOpacity>
 
-      <TouchableOpacity onPress={() => router.push("/student-login")}>
-        <Text style={styles.linkText}>Already have an account? Login</Text>
-      </TouchableOpacity>
+        <TouchableOpacity 
+          style={styles.linkContainer}
+          onPress={() => router.push("/student-login")}
+        >
+          <Text style={styles.linkText}>Already have an account? <Text style={styles.linkHighlight}>Login</Text></Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#f5f5f5" },
-  title: { fontSize: 24, fontWeight: "bold", marginBottom: 20 },
-  input: { width: "80%", padding: 10, borderWidth: 1, marginBottom: 10, borderRadius: 5 },
-  button: { backgroundColor: "#007bff", padding: 15, width: "80%", alignItems: "center", borderRadius: 5 },
-  buttonText: { color: "#fff", fontSize: 18 },
-  linkText: { color: "#007bff", marginTop: 10 },
+  container: { 
+    flex: 1, 
+    justifyContent: "center", 
+    alignItems: "center", 
+    backgroundColor: "#f8f9fa" 
+  },
+  card: {
+    width: "85%",
+    backgroundColor: "#ffffff",
+    borderRadius: 12,
+    padding: 25,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 5
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: "600",
+    color: "#34495e",
+    textAlign: "center",
+    marginBottom: 5
+  },
+  subtitle: {
+    fontSize: 14,
+    color: "#7f8c8d",
+    textAlign: "center",
+    marginBottom: 25
+  },
+  input: {
+    width: "100%",
+    height: 50,
+    paddingHorizontal: 15,
+    borderWidth: 1,
+    borderColor: "#dfe6e9",
+    borderRadius: 8,
+    backgroundColor: "#f8f9fa",
+    marginBottom: 15,
+    fontSize: 16,
+    color: "#34495e"
+  },
+  button: {
+    backgroundColor: "#34495e",
+    height: 50,
+    borderRadius: 8,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 10,
+    shadowColor: "#34495e",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+    elevation: 4
+  },
+  buttonText: {
+    color: "#ffffff",
+    fontSize: 16,
+    fontWeight: "600",
+    letterSpacing: 0.5
+  },
+  linkContainer: {
+    marginTop: 20,
+    alignItems: "center"
+  },
+  linkText: {
+    color: "#7f8c8d",
+    fontSize: 14
+  },
+  linkHighlight: {
+    color: "#34495e",
+    fontWeight: "600"
+  }
 });

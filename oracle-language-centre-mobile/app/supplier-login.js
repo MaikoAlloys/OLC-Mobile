@@ -26,20 +26,99 @@ export default function SupplierLogin() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Supplier Login</Text>
-      <TextInput placeholder="Username" style={styles.input} onChangeText={setUsername} />
-      <TextInput placeholder="Password" style={styles.input} secureTextEntry onChangeText={setPassword} />
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Login</Text>
-      </TouchableOpacity>
+      <View style={styles.loginCard}>
+        <Text style={styles.title}>Supplier Portal</Text>
+        <View style={styles.formGroup}>
+          <Text style={styles.label}>Username</Text>
+          <TextInput 
+            style={styles.input} 
+            onChangeText={setUsername}
+            placeholder="Enter your username"
+            placeholderTextColor="#95a5a6"
+          />
+        </View>
+        <View style={styles.formGroup}>
+          <Text style={styles.label}>Password</Text>
+          <TextInput 
+            style={styles.input} 
+            secureTextEntry 
+            onChangeText={setPassword}
+            placeholder="Enter your password"
+            placeholderTextColor="#95a5a6"
+          />
+        </View>
+        <TouchableOpacity style={styles.button} onPress={handleLogin}>
+          <Text style={styles.buttonText}>Sign In</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#f5f5f5" },
-  title: { fontSize: 24, marginBottom: 20 },
-  input: { width: "80%", padding: 10, borderWidth: 1, marginBottom: 10, borderRadius: 5 },
-  button: { backgroundColor: "#007bff", padding: 15, width: "80%", alignItems: "center", borderRadius: 5 },
-  buttonText: { color: "#fff", fontSize: 18 },
+  container: { 
+    flex: 1, 
+    justifyContent: "center", 
+    alignItems: "center", 
+    backgroundColor: "#f8f9fa" 
+  },
+  loginCard: {
+    width: "90%",
+    maxWidth: 400,
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    padding: 30,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 5
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "600",
+    color: "#34495e",
+    marginBottom: 30,
+    textAlign: "center"
+  },
+  formGroup: {
+    marginBottom: 20
+  },
+  label: {
+    fontSize: 14,
+    fontWeight: "500",
+    color: "#34495e",
+    marginBottom: 8,
+    marginLeft: 5
+  },
+  input: {
+    width: "100%",
+    height: 50,
+    paddingHorizontal: 15,
+    borderWidth: 1,
+    borderColor: "#dfe6e9",
+    borderRadius: 8,
+    backgroundColor: "#f8f9fa",
+    fontSize: 16,
+    color: "#34495e"
+  },
+  button: {
+    backgroundColor: "#34495e",
+    height: 50,
+    borderRadius: 8,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 10,
+    shadowColor: "#34495e",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+    elevation: 4
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
+    letterSpacing: 0.5
+  }
 });

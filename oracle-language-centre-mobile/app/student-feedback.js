@@ -1,54 +1,54 @@
 import React, { useEffect, useState } from "react";
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  FlatList, 
-  TextInput, 
-  TouchableOpacity, 
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  TextInput,
+  TouchableOpacity,
   Modal,
-  ActivityIndicator
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  Keyboard
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "./api";
 import { MaterialIcons } from "@expo/vector-icons";
 
-// Star Rating Components (unchanged)
-const StarRatingInput = ({ rating, onRatingChange }) => {
-  return (
-    <View style={styles.starRatingContainer}>
-      {[1, 2, 3, 4, 5].map((star) => (
-        <TouchableOpacity 
-          key={star} 
-          onPress={() => onRatingChange(star)}
-          activeOpacity={0.7}
-        >
-          <MaterialIcons
-            name={star <= rating ? "star" : "star-border"}
-            size={32}
-            color={star <= rating ? "#FFD700" : "#CCCCCC"}
-          />
-        </TouchableOpacity>
-      ))}
-    </View>
-  );
-};
-
-const StarRatingDisplay = ({ rating }) => {
-  return (
-    <View style={styles.starRatingContainer}>
-      {[1, 2, 3, 4, 5].map((star) => (
+// Star Rating Components
+const StarRatingInput = ({ rating, onRatingChange }) => (
+  <View style={styles.starRatingContainer}>
+    {[1, 2, 3, 4, 5].map((star) => (
+      <TouchableOpacity 
+        key={star} 
+        onPress={() => onRatingChange(star)} 
+        activeOpacity={0.7}
+      >
         <MaterialIcons
-          key={star}
           name={star <= rating ? "star" : "star-border"}
-          size={16}
+          size={32}
           color={star <= rating ? "#FFD700" : "#CCCCCC"}
         />
-      ))}
-    </View>
-  );
-};
+      </TouchableOpacity>
+    ))}
+  </View>
+);
+
+const StarRatingDisplay = ({ rating }) => (
+  <View style={styles.starRatingContainer}>
+    {[1, 2, 3, 4, 5].map((star) => (
+      <MaterialIcons
+        key={star}
+        name={star <= rating ? "star" : "star-border"}
+        size={16}
+        color={star <= rating ? "#FFD700" : "#CCCCCC"}
+      />
+    ))}
+  </View>
+);
 
 export default function FeedbackScreen() {
   const [loading, setLoading] = useState(true);
@@ -72,7 +72,6 @@ export default function FeedbackScreen() {
         const studentData = JSON.parse(studentToken);
         setStudentId(studentData.id);
 
-        // Fetch users for feedback
         const usersResponse = await api.get(`/feedback/users/${studentData.id}`);
         const transformedUsers = usersResponse.data.users.map((user, index) => ({
           id: `${user.role}-${user.id}-${index}`,
@@ -82,7 +81,6 @@ export default function FeedbackScreen() {
         }));
         setUsers(transformedUsers);
 
-        // Fetch feedback history
         const historyResponse = await api.get(`/feedback/feedbacks/${studentData.id}`);
         setFeedbackHistory(historyResponse.data);
       } catch (error) {
@@ -107,6 +105,8 @@ export default function FeedbackScreen() {
     }
 
     try {
+      Keyboard.dismiss(); // Properly dismiss keyboard when submitting
+      
       const response = await api.post("/feedback/submit-feedback", {
         student_id: studentId,
         recipient_id: selectedUser.originalData.id,
@@ -131,7 +131,6 @@ export default function FeedbackScreen() {
   };
 
   const renderFeedbackItem = ({ item }) => {
-    // Determine recipient name and role based on API response structure
     let recipientName = "Unknown";
     let recipientRole = "Unknown role";
 
@@ -157,15 +156,15 @@ export default function FeedbackScreen() {
           </Text>
           <Text style={styles.dateText}>{new Date(item.created_at).toLocaleString()}</Text>
         </View>
-        
+
         {item.rating && (
           <View style={styles.ratingContainer}>
             <StarRatingDisplay rating={item.rating} />
           </View>
         )}
-        
+
         <Text style={styles.feedbackMessage}>{item.feedback_message}</Text>
-        
+
         {item.reply && (
           <View style={styles.replyContainer}>
             <Text style={styles.replyHeader}>Response:</Text>
@@ -175,7 +174,7 @@ export default function FeedbackScreen() {
             </Text>
           </View>
         )}
-        
+
         <View style={styles.statusContainer}>
           <Text style={[
             styles.statusText,
@@ -188,123 +187,124 @@ export default function FeedbackScreen() {
     );
   };
 
-  const renderHeader = () => (
-    <>
-      <Text style={styles.sectionTitle}>New Feedback</Text>
-      
-      <View style={styles.formContainer}>
-        <Text style={styles.label}>Select Recipient:</Text>
-        <View style={styles.pickerContainer}>
-          <Picker
-            selectedValue={selectedUser?.id || ""}
-            onValueChange={handleUserSelection}
-            style={styles.picker}
-          >
-            <Picker.Item label="Select a person..." value="" />
-            {users.map(user => (
-              <Picker.Item 
-                key={user.id}
-                label={`${user.name} (${user.type})`} 
-                value={user.id} 
-              />
-            ))}
-          </Picker>
-        </View>
-        
-        {selectedUser && (
-          <>
-            <Text style={styles.label}>Role:</Text>
-            <TextInput
-              style={styles.input}
-              value={selectedUser.type}
-              editable={false}
-            />
-            
-            <Text style={styles.label}>Rating (optional):</Text>
-            <StarRatingInput rating={rating} onRatingChange={setRating} />
-          </>
-        )}
-        
-        <Text style={styles.label}>Your Feedback:</Text>
-        <TextInput
-          style={[styles.input, styles.multilineInput]}
-          multiline
-          numberOfLines={4}
-          value={feedbackText}
-          onChangeText={setFeedbackText}
-          placeholder="Type your feedback here..."
-        />
-        
-        <TouchableOpacity 
-          style={styles.submitButton} 
-          onPress={handleSubmitFeedback}
-        >
-          <Text style={styles.submitButtonText}>Submit Feedback</Text>
-        </TouchableOpacity>
-      </View>
-      
-      <Text style={styles.sectionTitle}>Feedback History</Text>
-    </>
-  );
-
-  const renderEmptyComponent = () => (
-    <View style={styles.emptyHistory}>
-      <MaterialIcons name="feedback" size={48} color="#CCCCCC" />
-      <Text style={styles.emptyHistoryText}>No feedback history yet</Text>
-    </View>
-  );
-
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#34495e" />
+        <ActivityIndicator size="large" color="#666" />
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
-      <FlatList
-        data={feedbackHistory}
-        renderItem={renderFeedbackItem}
-        keyExtractor={(item) => item.feedback_id.toString()}
-        contentContainerStyle={styles.scrollContainer}
-        ListHeaderComponent={renderHeader}
-        ListEmptyComponent={renderEmptyComponent}
-      />
-      
-      <Modal
-        visible={showSuccessModal}
-        transparent={true}
-        animationType="slide"
-        onRequestClose={() => setShowSuccessModal(false)}
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
+    >
+      <ScrollView 
+        contentContainerStyle={styles.container}
+        keyboardShouldPersistTaps="handled"
       >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <MaterialIcons name="check-circle" size={48} color="#4CAF50" />
-            <Text style={styles.modalTitle}>Success!</Text>
-            <Text style={styles.modalText}>Your feedback has been submitted successfully.</Text>
-            <TouchableOpacity
-              style={styles.modalButton}
-              onPress={() => setShowSuccessModal(false)}
+        <Text style={styles.sectionTitle}>New Feedback</Text>
+
+        <View style={styles.formContainer}>
+          <Text style={styles.label}>Select Recipient:</Text>
+          <View style={styles.pickerContainer}>
+            <Picker
+              selectedValue={selectedUser?.id || ""}
+              onValueChange={handleUserSelection}
+              style={styles.picker}
             >
-              <Text style={styles.modalButtonText}>OK</Text>
-            </TouchableOpacity>
+              <Picker.Item label="Select a person..." value="" />
+              {users.map(user => (
+                <Picker.Item
+                  key={user.id}
+                  label={`${user.name} (${user.type})`}
+                  value={user.id}
+                />
+              ))}
+            </Picker>
           </View>
+
+          {selectedUser && (
+            <>
+              <Text style={styles.label}>Role:</Text>
+              <TextInput
+                style={styles.input}
+                value={selectedUser.type}
+                editable={false}
+              />
+            </>
+          )}
+
+          <Text style={styles.label}>Rating (optional):</Text>
+          <StarRatingInput rating={rating} onRatingChange={setRating} />
+
+          <Text style={styles.label}>Your Feedback:</Text>
+          <TextInput
+            style={[styles.input, styles.multilineInput]}
+            value={feedbackText}
+            onChangeText={setFeedbackText}
+            placeholder="Type your feedback here..."
+            multiline
+            numberOfLines={4}
+            textAlignVertical="top"
+          />
+
+          <TouchableOpacity 
+            style={styles.submitButton} 
+            onPress={handleSubmitFeedback}
+          >
+            <Text style={styles.submitButtonText}>Submit Feedback</Text>
+          </TouchableOpacity>
         </View>
-      </Modal>
-    </View>
+
+        <Text style={styles.sectionTitle}>Feedback History</Text>
+
+        {feedbackHistory.length > 0 ? (
+          <FlatList
+            data={feedbackHistory}
+            renderItem={renderFeedbackItem}
+            keyExtractor={(item) => item.feedback_id.toString()}
+            scrollEnabled={false} // Let ScrollView handle scrolling
+          />
+        ) : (
+          <View style={styles.emptyHistory}>
+            <MaterialIcons name="feedback" size={48} color="#CCCCCC" />
+            <Text style={styles.emptyHistoryText}>No feedback history yet</Text>
+          </View>
+        )}
+
+        <Modal
+          visible={showSuccessModal}
+          transparent={true}
+          animationType="slide"
+          onRequestClose={() => setShowSuccessModal(false)}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <MaterialIcons name="check-circle" size={48} color="#4CAF50" />
+              <Text style={styles.modalTitle}>Success!</Text>
+              <Text style={styles.modalText}>Your feedback has been submitted successfully.</Text>
+              <TouchableOpacity
+                style={styles.modalButton}
+                onPress={() => setShowSuccessModal(false)}
+              >
+                <Text style={styles.modalButtonText}>OK</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
-// Styles remain exactly the same as in your original code
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: "#F5F5F5",
-  },
-  scrollContainer: {
+    flexGrow: 1,
     padding: 16,
+    backgroundColor: "#F5F5F5",
   },
   loadingContainer: {
     flex: 1,
@@ -356,7 +356,7 @@ const styles = StyleSheet.create({
     color: "#34495e",
   },
   multilineInput: {
-    height: 120,
+    minHeight: 120,
     textAlignVertical: "top",
   },
   starRatingContainer: {
@@ -450,9 +450,6 @@ const styles = StyleSheet.create({
   resolvedStatus: {
     backgroundColor: "#D4EDDA",
     color: "#155724",
-  },
-  historyList: {
-    paddingBottom: 24,
   },
   emptyHistory: {
     alignItems: "center",

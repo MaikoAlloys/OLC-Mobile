@@ -63,33 +63,87 @@ export default function LibrarianLogin() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Librarian Login</Text>
-      <TextInput
-        placeholder="Username"
-        style={styles.input}
-        value={username}
-        onChangeText={setUsername}
-        autoCapitalize="none"
-      />
-      <TextInput
-        placeholder="Password"
-        style={styles.input}
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-        autoCapitalize="none"
-      />
-      <TouchableOpacity style={styles.button} onPress={handleLogin} disabled={loading}>
-        {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Login</Text>}
-      </TouchableOpacity>
+      <View style={styles.loginContainer}>
+        <Text style={styles.title}>Librarian Login</Text>
+        <TextInput
+          placeholder="Username"
+          placeholderTextColor="#95a5a6"
+          style={styles.input}
+          value={username}
+          onChangeText={setUsername}
+          autoCapitalize="none"
+        />
+        <TextInput
+          placeholder="Password"
+          placeholderTextColor="#95a5a6"
+          style={styles.input}
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+          autoCapitalize="none"
+        />
+        <TouchableOpacity style={styles.button} onPress={handleLogin} disabled={loading}>
+          {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Login</Text>}
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#f5f5f5" },
-  title: { fontSize: 24, marginBottom: 20 },
-  input: { width: "80%", padding: 10, borderWidth: 1, marginBottom: 10, borderRadius: 5, backgroundColor: "#fff" },
-  button: { backgroundColor: "#28a745", padding: 15, width: "80%", alignItems: "center", borderRadius: 5 },
-  buttonText: { color: "#fff", fontSize: 18 },
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#f8f9fa"
+  },
+  loginContainer: {
+    width: "85%",
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    padding: 30,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 3
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: "600",
+    marginBottom: 25,
+    color: "#34495e",
+    textAlign: "center",
+    letterSpacing: 0.5
+  },
+  input: {
+    width: "100%",
+    padding: 14,
+    borderWidth: 1,
+    borderColor: "#dfe6e9",
+    marginBottom: 15,
+    borderRadius: 8,
+    fontSize: 16,
+    backgroundColor: "#f8f9fa",
+    color: "#34495e"
+  },
+  button: {
+    backgroundColor: "#34495e",
+    padding: 16,
+    width: "100%",
+    alignItems: "center",
+    borderRadius: 8,
+    marginTop: 10,
+    shadowColor: "#34495e",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "500",
+    letterSpacing: 0.5
+  }
 });

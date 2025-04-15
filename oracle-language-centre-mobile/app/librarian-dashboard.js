@@ -40,7 +40,7 @@ const LearningResourcesScreen = () => {
   const handleLogout = () => {
     // Perform logout logic here (e.g., clearing authentication tokens)
     console.log('User logged out');
-    router.push('/librarian-login'); // Redirect to login page
+    router.push('/'); // Redirect to login page
   };
 
   if (loading) {
@@ -78,11 +78,11 @@ const LearningResourcesScreen = () => {
           <TouchableOpacity onPress={() => router.push('/resource-requests')}>
             <Text style={styles.navItem}>Resource Requests</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => router.push('/submitted-resources')}>
+          {/* <TouchableOpacity onPress={() => router.push('/submitted-resources')}>
             <Text style={styles.navItem}>Submitted Resources</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => router.push('/cleared-students')}>
-            <Text style={styles.navItem}>Cleared Students</Text>
+          </TouchableOpacity> */}
+          <TouchableOpacity onPress={() => router.push('/librarian-feedback')}>
+            <Text style={styles.navItem}>Feedbacks</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={handleLogout}>
             <Text style={[styles.navItem, styles.logout]}>Logout</Text>

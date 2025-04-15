@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 14, 2025 at 08:19 PM
+-- Generation Time: Apr 15, 2025 at 01:08 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -105,13 +105,17 @@ INSERT INTO `feedback` (`feedback_id`, `student_id`, `tutor_id`, `librarian_id`,
 (2, 3, 1, NULL, NULL, NULL, 'Hey Mary', NULL, '2025-04-14 15:45:44', 'pending', NULL, NULL, NULL),
 (3, 3, 1, NULL, NULL, NULL, 'Hey Kerren', NULL, '2025-04-14 15:46:49', 'pending', NULL, NULL, NULL),
 (4, 3, 1, NULL, NULL, NULL, 'Hey Dennis', 2, '2025-04-14 15:48:10', 'pending', NULL, NULL, NULL),
-(5, 3, 3, NULL, NULL, NULL, 'Hey Den', 1, '2025-04-14 16:21:24', 'pending', NULL, NULL, NULL),
-(6, 2, 1, NULL, NULL, NULL, 'Hey Kerren Maiko it is finance Alex.', 5, '2025-04-14 16:52:12', 'pending', NULL, NULL, NULL),
+(5, 3, 3, NULL, NULL, NULL, 'Hey Den,\r\nI have an issue with my portal.\r\nCan you help me fix it?', 1, '2025-04-14 16:21:24', 'resolved', 'I got you bro', 'Denis', '2025-04-15 08:36:38'),
+(6, 2, 1, NULL, NULL, NULL, 'Hey Kerren Maiko it is finance Alex.', 5, '2025-04-14 16:52:12', 'resolved', 'Okey ..done doend', 'Mary', '2025-04-15 09:04:16'),
 (7, 2, 1, NULL, NULL, NULL, 'Hey Kariyki ', 1, '2025-04-14 17:00:22', 'pending', NULL, NULL, NULL),
-(8, 2, NULL, NULL, NULL, 1, 'Hey keeeeerrr', 1, '2025-04-14 17:12:45', 'pending', NULL, NULL, NULL),
-(9, 2, NULL, NULL, 1, NULL, 'Hey Pettttt', 1, '2025-04-14 17:13:33', 'pending', NULL, NULL, NULL),
+(8, 2, NULL, NULL, NULL, 1, 'Hey keeeeerrr', 1, '2025-04-14 17:12:45', 'resolved', 'Okey Alloys', 'Kerren', '2025-04-15 11:05:48'),
+(9, 2, NULL, NULL, 1, NULL, 'Hey Pettttt', 1, '2025-04-14 17:13:33', 'resolved', 'Thanks', 'my name', '2025-04-15 07:12:23'),
 (10, 2, NULL, 1, NULL, NULL, 'Hey librarian ', 4, '2025-04-14 17:26:14', 'resolved', 'WELCOME', NULL, NULL),
-(11, 2, NULL, NULL, 1, NULL, 'Th', 2, '2025-04-14 17:35:44', 'pending', NULL, NULL, NULL);
+(11, 2, NULL, NULL, 1, NULL, 'Th', 2, '2025-04-14 17:35:44', 'resolved', 'Okey brother', 'Peter Kariuki', '2025-04-15 07:30:34'),
+(12, 2, NULL, NULL, 1, NULL, 'A', 4, '2025-04-15 10:11:14', 'pending', NULL, NULL, NULL),
+(13, 2, NULL, NULL, 1, NULL, '\nI appreciate for the approval of fee.\n', 5, '2025-04-15 10:25:27', 'resolved', 'You\'re welcome,pay your balance!', 'Peter Kariuki', '2025-04-15 10:26:45'),
+(14, 2, 2, NULL, NULL, NULL, 'Appreciate your teachings.', 2, '2025-04-15 10:26:01', 'resolved', 'Welcome and attend Classes!!', 'Mark', '2025-04-15 10:27:17'),
+(15, 3, NULL, 1, NULL, NULL, 'The resources were helpful!', 3, '2025-04-15 10:50:52', 'resolved', 'Okey great', 'Lanoi', '2025-04-15 10:51:39');
 
 -- --------------------------------------------------------
 
@@ -725,7 +729,7 @@ ALTER TABLE `courses`
 -- AUTO_INCREMENT for table `feedback`
 --
 ALTER TABLE `feedback`
-  MODIFY `feedback_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `feedback_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `finance_managers`

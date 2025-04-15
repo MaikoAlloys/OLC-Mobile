@@ -187,5 +187,218 @@ router.get("/feedbacks/:student_id", async (req, res) => {
     }
 });
 
+// fetching feedback for finance with sender name
+router.get('/finance-feedback', (req, res) => {
+    const sql = `
+      SELECT 
+        f.*, 
+        u.first_name, 
+        u.last_name, 
+        CONCAT(u.first_name, ' ', u.last_name) AS sender_name 
+      FROM feedback f 
+      JOIN users u ON f.student_id = u.id 
+      WHERE f.finance_manager_id IS NOT NULL 
+      ORDER BY f.created_at DESC
+    `;
+  
+    db.query(sql, (err, results) => {
+      if (err) {
+        console.error('Error fetching finance feedback:', err);
+        return res.status(500).json({ error: 'Internal server error' });
+      }
+      res.json({ feedback: results });
+    });
+  });
+  
+  
+  //finance replying to feedback
+  router.post('/finance-feedback/reply/:id', (req, res) => {
+    const feedbackId = req.params.id;
+    const { replyMessage, replyBy } = req.body;
+  
+    if (!replyMessage || !replyBy) {
+      return res.status(400).json({ error: 'Missing replyMessage or replyBy' });
+    }
+  
+    const sql = `
+      UPDATE feedback 
+      SET reply = ?, reply_by = ?, reply_time = NOW(), status = 'resolved'
+      WHERE feedback_id = ? AND finance_manager_id IS NOT NULL
+    `;
+  
+    db.query(sql, [replyMessage, replyBy, feedbackId], (err, result) => {
+      if (err) {
+        console.error('Error submitting finance reply:', err);
+        return res.status(500).json({ error: 'Internal server error' });
+      }
+  
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ error: 'Feedback not found or not assigned to finance' });
+      }
+  
+      res.json({ message: 'Reply submitted successfully' });
+    });
+  });
 
+  // Fetch feedback for a specific tutor by their ID
+  router.get('/tutor-feedback/:tutorId', (req, res) => {
+    const tutorId = req.params.tutorId;
+  
+    const sql = `
+      SELECT 
+        f.*, 
+        u.first_name, 
+        u.last_name, 
+        CONCAT(u.first_name, ' ', u.last_name) AS sender_name 
+      FROM feedback f
+      JOIN users u ON f.student_id = u.id
+      WHERE f.tutor_id = ?
+      ORDER BY f.created_at DESC
+    `;
+  
+    db.query(sql, [tutorId], (err, results) => {
+      if (err) {
+        console.error('Error fetching tutor feedback:', err);
+        return res.status(500).json({ error: 'Internal server error' });
+      }
+  
+      res.json({ feedback: results });
+    });
+  });
+  
+  // Tutor replying to feedback
+router.post('/tutor-feedback/reply/:id', (req, res) => {
+    const feedbackId = req.params.id;
+    const { replyMessage, replyBy } = req.body;
+  
+    if (!replyMessage || !replyBy) {
+      return res.status(400).json({ error: 'Missing replyMessage or replyBy' });
+    }
+  
+    const sql = `
+      UPDATE feedback 
+      SET reply = ?, reply_by = ?, reply_time = NOW(), status = 'resolved'
+      WHERE feedback_id = ? AND tutor_id IS NOT NULL
+    `;
+  
+    db.query(sql, [replyMessage, replyBy, feedbackId], (err, result) => {
+      if (err) {
+        console.error('Error submitting tutor reply:', err);
+        return res.status(500).json({ error: 'Internal server error' });
+      }
+  
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ error: 'Feedback not found or not assigned to this tutor' });
+      }
+  
+      res.json({ message: 'Reply submitted successfully' });
+    });
+  });
+  
+
+  //fetching feedback for librarian
+  router.get('/librarian-feedback', (req, res) => {
+    const sql = `
+      SELECT 
+        f.*, 
+        u.first_name, 
+        u.last_name, 
+        CONCAT(u.first_name, ' ', u.last_name) AS sender_name 
+      FROM feedback f 
+      JOIN users u ON f.student_id = u.id 
+      WHERE f.librarian_id IS NOT NULL 
+      ORDER BY f.created_at DESC
+    `;
+  
+    db.query(sql, (err, results) => {
+      if (err) {
+        console.error('Error fetching librarian feedback:', err);
+        return res.status(500).json({ error: 'Internal server error' });
+      }
+      res.json({ feedback: results });
+    });
+  });
+  
+  //endpoint for librarian to reply feedback
+  router.post('/librarian-feedback/reply/:id', (req, res) => {
+    const feedbackId = req.params.id;
+    const { replyMessage, replyBy } = req.body;
+  
+    if (!replyMessage || !replyBy) {
+      return res.status(400).json({ error: 'Missing replyMessage or replyBy' });
+    }
+  
+    const sql = `
+      UPDATE feedback 
+      SET reply = ?, reply_by = ?, reply_time = NOW(), status = 'resolved'
+      WHERE feedback_id = ? AND librarian_id IS NOT NULL
+    `;
+  
+    db.query(sql, [replyMessage, replyBy, feedbackId], (err, result) => {
+      if (err) {
+        console.error('Error submitting librarian reply:', err);
+        return res.status(500).json({ error: 'Internal server error' });
+      }
+  
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ error: 'Feedback not found or not assigned to librarian' });
+      }
+  
+      res.json({ message: 'Reply submitted successfully' });
+    });
+  });
+
+  //fetching feedback for hod
+  router.get('/hod-feedback', (req, res) => {
+    const sql = `
+      SELECT 
+        f.*, 
+        u.first_name, 
+        u.last_name, 
+        CONCAT(u.first_name, ' ', u.last_name) AS sender_name 
+      FROM feedback f 
+      JOIN users u ON f.student_id = u.id 
+      WHERE f.hod_id IS NOT NULL 
+      ORDER BY f.created_at DESC
+    `;
+  
+    db.query(sql, (err, results) => {
+      if (err) {
+        console.error('Error fetching HOD feedback:', err);
+        return res.status(500).json({ error: 'Internal server error' });
+      }
+      res.json({ feedback: results });
+    });
+  });
+
+  //hod replying for feedback
+  router.post('/hod-feedback/reply/:id', (req, res) => {
+    const feedbackId = req.params.id;
+    const { replyMessage, replyBy } = req.body;
+  
+    if (!replyMessage || !replyBy) {
+      return res.status(400).json({ error: 'Missing replyMessage or replyBy' });
+    }
+  
+    const sql = `
+      UPDATE feedback 
+      SET reply = ?, reply_by = ?, reply_time = NOW(), status = 'resolved'
+      WHERE feedback_id = ? AND hod_id IS NOT NULL
+    `;
+  
+    db.query(sql, [replyMessage, replyBy, feedbackId], (err, result) => {
+      if (err) {
+        console.error('Error submitting HOD reply:', err);
+        return res.status(500).json({ error: 'Internal server error' });
+      }
+  
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ error: 'Feedback not found or not assigned to HOD' });
+      }
+  
+      res.json({ message: 'Reply submitted successfully' });
+    });
+  });
+  
+  
 module.exports = router;

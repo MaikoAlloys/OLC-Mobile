@@ -56,26 +56,38 @@ export default function StudentLogin() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Student Login</Text>
-      <TextInput
-        placeholder="Username"
-        style={styles.input}
-        value={username}
-        onChangeText={setUsername}
-      />
-      <TextInput
-        placeholder="Password"
-        style={styles.input}
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-      />
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Login</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => router.push("/student-register")}>
-        <Text style={styles.linkText}>Don't have an account? Register</Text>
-      </TouchableOpacity>
+      <View style={styles.loginCard}>
+        <Text style={styles.title}>Student Portal</Text>
+        <Text style={styles.subtitle}>Sign in to continue</Text>
+        
+        <TextInput
+          placeholder="Username"
+          placeholderTextColor="#95a5a6"
+          style={styles.input}
+          value={username}
+          onChangeText={setUsername}
+        />
+        
+        <TextInput
+          placeholder="Password"
+          placeholderTextColor="#95a5a6"
+          style={styles.input}
+          secureTextEntry
+          value={password}
+          onChangeText={setPassword}
+        />
+        
+        <TouchableOpacity style={styles.button} onPress={handleLogin}>
+          <Text style={styles.buttonText}>Login</Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity 
+          style={styles.linkContainer} 
+          onPress={() => router.push("/student-register")}
+        >
+          <Text style={styles.linkText}>Don't have an account? <Text style={styles.linkHighlight}>Register</Text></Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -85,33 +97,73 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#f8f9fa",
+  },
+  loginCard: {
+    width: "85%",
+    backgroundColor: "#ffffff",
+    borderRadius: 12,
+    padding: 30,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 5
   },
   title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 20,
+    fontSize: 22,
+    fontWeight: "600",
+    color: "#34495e",
+    textAlign: "center",
+    marginBottom: 5
+  },
+  subtitle: {
+    fontSize: 14,
+    color: "#7f8c8d",
+    textAlign: "center",
+    marginBottom: 30
   },
   input: {
-    width: "80%",
-    padding: 10,
+    width: "100%",
+    height: 50,
+    paddingHorizontal: 15,
     borderWidth: 1,
-    marginBottom: 10,
-    borderRadius: 5,
+    borderColor: "#dfe6e9",
+    borderRadius: 8,
+    backgroundColor: "#f8f9fa",
+    marginBottom: 20,
+    fontSize: 16,
+    color: "#34495e"
   },
   button: {
-    backgroundColor: "#007bff",
-    padding: 15,
-    width: "80%",
+    backgroundColor: "#34495e",
+    height: 50,
+    borderRadius: 8,
+    justifyContent: "center",
     alignItems: "center",
-    borderRadius: 5,
+    marginTop: 10,
+    shadowColor: "#34495e",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+    elevation: 4
   },
   buttonText: {
-    color: "#fff",
-    fontSize: 18,
+    color: "#ffffff",
+    fontSize: 16,
+    fontWeight: "600",
+    letterSpacing: 0.5
+  },
+  linkContainer: {
+    marginTop: 20,
+    alignItems: "center"
   },
   linkText: {
-    color: "#007bff",
-    marginTop: 10,
+    color: "#7f8c8d",
+    fontSize: 14
   },
+  linkHighlight: {
+    color: "#34495e",
+    fontWeight: "600"
+  }
 });

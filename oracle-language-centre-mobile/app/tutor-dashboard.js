@@ -73,7 +73,7 @@ export default function TutorDashboard() {
   // ✅ Handle Logout
   const handleLogout = async () => {
     // await AsyncStorage.removeItem("tutorToken"); // Clear token
-    router.push("/tutor-login"); // Redirect to login
+    router.push("/"); // Redirect to login
   };
 
   return (
@@ -98,6 +98,9 @@ export default function TutorDashboard() {
           </TouchableOpacity>
           <TouchableOpacity onPress={() => router.push("/tutor-student-completed")}>
             <Text style={styles.navItem}>Students Completed Learning</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push("/tutor-feedbacks")}>
+            <Text style={styles.navItem}>Feedbacks</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={handleLogout}>
             <Text style={[styles.navItem, styles.logout]}>Logout</Text>

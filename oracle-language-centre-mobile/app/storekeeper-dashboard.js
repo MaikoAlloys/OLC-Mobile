@@ -35,7 +35,7 @@ const StorekeeperDashboard = () => {
 
     const handleLogout = () => {
         console.log("Logging out...");
-        router.push("/storekeeper-login");
+        router.push("/");
     };
 
     if (loading) {

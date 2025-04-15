@@ -57,7 +57,7 @@ export default function HODDashboard() {
 
   const handleLogout = () => {
     AsyncStorage.removeItem("hodToken");
-    router.push("/hod-login");
+    router.push("/");
   };
 
   return (
@@ -76,6 +76,9 @@ export default function HODDashboard() {
           </TouchableOpacity>
           <TouchableOpacity onPress={() => router.push("/hod-assigned-students")}>
             <Text style={styles.navItem}>Assigned Students</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push("/hod-feedbacks")}>
+            <Text style={styles.navItem}>Feedbacks</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={handleLogout}>
             <Text style={[styles.navItem, styles.logout]}>Logout</Text>
